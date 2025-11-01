@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\GenerateMonthlyBillInstancesAction;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\BillerController;
@@ -34,3 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+Route::get('test', function () {
+    $action = app(GenerateMonthlyBillInstancesAction::class);
+    $action->execute();
+});

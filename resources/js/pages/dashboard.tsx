@@ -3,12 +3,14 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import {
     Account,
+    BillInstance,
     PaginateData,
     Transaction,
     type BreadcrumbItem,
 } from '@/types';
 import { Head } from '@inertiajs/react';
 import AccountsTable from '../tables/accounts-table';
+import BillInstanceTable from '../tables/bill-instance-table';
 import TransactionsTable from '../tables/transactions-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,9 +23,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface DashboardProps {
     transactions: PaginateData<Transaction>;
     accounts: PaginateData<Account>;
+    pendingBills: BillInstance[];
 }
 
-export default function Dashboard({ transactions, accounts }: DashboardProps) {
+export default function Dashboard({
+    transactions,
+    accounts,
+    pendingBills,
+}: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -41,11 +48,17 @@ export default function Dashboard({ transactions, accounts }: DashboardProps) {
                 </div>
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative col-span-2 aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative col-span-2 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <TransactionsTable transactions={transactions} />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <AccountsTable accounts={accounts} fullView={false} />
+                    </div>
+                </div>
+
+                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                    <div className="relative col-span-2 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                        <BillInstanceTable billInstances={pendingBills} />
                     </div>
                 </div>
 

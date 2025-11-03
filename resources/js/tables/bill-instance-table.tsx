@@ -61,7 +61,7 @@ export default function BillInstanceTable({
                             <TableCell>
                                 {formatDate(billInstance.due_date)}
                             </TableCell>
-                            <TableCell>{billInstance.amount}</TableCell>
+                            <TableCell>INR {billInstance.amount}</TableCell>
                             <TableCell>
                                 <Dialog>
                                     <DialogTrigger asChild>

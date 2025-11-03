@@ -27,6 +27,7 @@ class BillInstance extends Model
         'due_date' => 'date',
         'paid_date' => 'date',
         'status' => BillStatusEnum::class,
+        'amount' => 'decimal:2',
     ];
 
     public function bill(): BelongsTo

@@ -1,6 +1,6 @@
 # Xpense manager
 
-![Xpense Manager](https://raw.githubusercontent.com/amitavroy/expense_manager/main/docs/Dashboard-1.jpg)
+![Xpense Manager](https://raw.githubusercontent.com/amitavroy/expense_manager/main/docs/Dashboard-2.jpg)
 
 This application is an Expense manager that I want to use to track my expenses. 
 
@@ -51,6 +51,11 @@ When you edit a transaction, we are also handling the scenarios like user changi
 
 Users will be able to add **Billers** and their **Bills**. Based on that, Bills will be available on Dashboard for payment. When a Bill is paid, it will also get added to the Expenses with correct category.
 
+![Setup Billers](https://raw.githubusercontent.com/amitavroy/expense_manager/refs/heads/main/docs/Biller-Dashboard-1.jpg)
+
+And you will get a quick access to pay bill right from the Dashboard. Each bill payment is recorded as a transaction as well.
+
+![Setup Billers](https://raw.githubusercontent.com/amitavroy/expense_manager/refs/heads/main/docs/Bill-Pay-Modal-1.jpg)
 
 ```
 select t.*, u.name, c.name, c.type

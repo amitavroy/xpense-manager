@@ -7,7 +7,7 @@ import {
     TableHeader,
     TableRow,
 } from '../components/ui/table';
-import { formatDate } from '../lib/utils';
+import { formatCurrency, formatDate } from '../lib/utils';
 import { show } from '../routes/accounts';
 import { Account, PaginateData } from '../types';
 
@@ -61,7 +61,7 @@ export default function AccountsTable({
                                 </TableCell>
                             )}
                             <TableCell className="text-right">
-                                INR {account.balance}
+                                {formatCurrency(account.balance)}
                             </TableCell>
                         </TableRow>
                     ))}

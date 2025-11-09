@@ -12,3 +12,21 @@ export function formatDate(dateString: string): string {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }
+
+const currencyFormatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+});
+
+export function formatCurrency(amount: number | string): string {
+    const numbericAcmount =
+        typeof amount === 'string' ? parseFloat(amount) : amount;
+
+    if (!Number.isFinite(numbericAcmount)) {
+        return currencyFormatter.format(0);
+    }
+
+    return currencyFormatter.format(numbericAcmount);
+}

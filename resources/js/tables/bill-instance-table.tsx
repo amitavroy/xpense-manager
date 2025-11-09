@@ -17,7 +17,7 @@ import {
     TableRow,
 } from '../components/ui/table';
 import BillPayForm from '../forms/bill-pay-form';
-import { formatDate } from '../lib/utils';
+import { formatCurrency, formatDate } from '../lib/utils';
 import { Account, BillInstance, PaginateData } from '../types';
 
 interface BillInstanceTableProps {
@@ -61,7 +61,9 @@ export default function BillInstanceTable({
                             <TableCell>
                                 {formatDate(billInstance.due_date)}
                             </TableCell>
-                            <TableCell>INR {billInstance.amount}</TableCell>
+                            <TableCell>
+                                {formatCurrency(billInstance.amount)}
+                            </TableCell>
                             <TableCell>
                                 <Dialog>
                                     <DialogTrigger asChild>

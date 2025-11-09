@@ -7,7 +7,7 @@ import {
     TableHeader,
     TableRow,
 } from '../components/ui/table';
-import { formatDate } from '../lib/utils';
+import { formatCurrency, formatDate } from '../lib/utils';
 import { show } from '../routes/transactions';
 import { PaginateData, Transaction } from '../types';
 
@@ -51,7 +51,7 @@ export default function TransactionsTable({
                             <TableCell>{transaction.category?.name}</TableCell>
                             <TableCell>{transaction.account?.name}</TableCell>
                             <TableCell className="text-right">
-                                INR {transaction.amount}
+                                {formatCurrency(transaction.amount)}
                             </TableCell>
                         </TableRow>
                     ))}

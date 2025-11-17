@@ -37,7 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('bill-pay');
 
     Route::resource('incomes', IncomeController::class)
-        ->except(['edit']);
+        ->except(['edit'])
+        ->parameters(['incomes' => 'transaction']);
 });
 
 require __DIR__.'/settings.php';

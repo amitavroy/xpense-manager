@@ -74,9 +74,16 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Transaction $transaction): Response
     {
-        //
+        $accounts = $this->dropdownService->getAccounts(Auth::user());
+        $categories = $this->dropdownService->getCategories(TransactionTypeEnum::INCOME);
+
+        return Inertia::render('incomes/show', [
+            'accounts' => $accounts,
+            'categories' => $categories,
+            'transaction' => $transaction,
+        ]);
     }
 
     /**

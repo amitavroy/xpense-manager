@@ -8,16 +8,26 @@ import {
     TableRow,
 } from '../components/ui/table';
 import { formatCurrency, formatDate } from '../lib/utils';
-import { show } from '../routes/transactions';
-import { PaginateData, Transaction } from '../types';
+import { show as showIncome } from '../routes/incomes';
+import { show as showTransaction } from '../routes/transactions';
+import { PaginateData, Transaction, TransactionType } from '../types';
 
 interface TransactionsTableProps {
     transactions: PaginateData<Transaction>;
+    type: TransactionType;
 }
 
 export default function TransactionsTable({
     transactions,
+    type,
 }: TransactionsTableProps) {
+    const handleTransactionClick = (transactionId: number) => {
+        router.visit(
+            type === 'income'
+                ? showIncome(transactionId).url
+                : showTransaction(transactionId).url,
+        );
+    };
     return (
         <>
             <div className="flex items-center justify-center py-2 uppercase">
@@ -39,7 +49,7 @@ export default function TransactionsTable({
                         <TableRow
                             key={transaction.id}
                             onClick={() =>
-                                router.visit(show(transaction.id).url)
+                                handleTransactionClick(transaction.id)
                             }
                             className="cursor-pointer"
                         >

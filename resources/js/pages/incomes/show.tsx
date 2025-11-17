@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import Heading from '../../components/heading';
 import TransactionForm from '../../forms/transaction-form';
 import AppLayout from '../../layouts/app-layout';
-import { index } from '../../routes/transactions';
+import { index } from '../../routes/incomes';
 import {
     AccountDropdown,
     BreadcrumbItem,
@@ -12,34 +12,34 @@ import {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Transactions',
+        title: 'Incomes',
         href: index().url,
     },
     {
-        title: 'Add Transaction',
+        title: 'Income Details',
         href: '#',
     },
 ];
 
-interface TransactionsCreateProps {
+interface IncomesShowProps {
     accounts: AccountDropdown[];
     categories: CategoryDropdown[];
     transaction: Transaction;
 }
 
-export default function TransactionsCreatePage({
+export default function TransactionsShowPage({
     accounts,
     categories,
     transaction,
-}: TransactionsCreateProps) {
+}: IncomesShowProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Add Transaction" />
+            <Head title="Income Details" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <Heading
-                    title="Add Transaction"
-                    description="Add a new transaction"
+                    title="Income Details"
+                    description="View the details of an income"
                 />
 
                 <div className="grid grid-cols-4">
@@ -49,7 +49,7 @@ export default function TransactionsCreatePage({
                                 accounts={accounts}
                                 categories={categories}
                                 transaction={transaction}
-                                type="expense"
+                                type="income"
                             />
                         </div>
                     </div>

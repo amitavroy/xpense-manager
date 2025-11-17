@@ -49,6 +49,7 @@ export default function TransactionsShowPage({
                                 accounts={accounts}
                                 categories={categories}
                                 transaction={transaction}
+                                type="expense"
                             />
                         </div>
                     </div>

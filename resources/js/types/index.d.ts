@@ -68,6 +68,7 @@ export interface Category {
 
 export type AccountType = 'bank' | 'cash' | 'credit_card';
 export type CategoryType = 'income' | 'expense';
+export type TransactionType = 'income' | 'expense';
 
 export interface Account {
     id: number;

@@ -44,7 +44,10 @@ export default function TransactionsIndexPage({
                 <div className="grid grid-cols-3">
                     <div className="col-span-2">
                         <div className="flex flex-col gap-4">
-                            <TransactionsTable transactions={transactions} />
+                            <TransactionsTable
+                                transactions={transactions}
+                                type="expense"
+                            />
                         </div>
                     </div>
                     <div></div>

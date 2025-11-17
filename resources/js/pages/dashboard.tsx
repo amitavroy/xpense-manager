@@ -52,7 +52,10 @@ export default function Dashboard({
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="relative col-span-2 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <TransactionsTable transactions={transactions} />
+                        <TransactionsTable
+                            transactions={transactions}
+                            type="expense"
+                        />
                     </div>
                     <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <AccountsTable accounts={accounts} fullView={false} />

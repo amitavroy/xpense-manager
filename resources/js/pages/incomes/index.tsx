@@ -39,7 +39,10 @@ export default function IncomesIndexPage({ incomes }: IncomesIndexProps) {
                 <div className="grid grid-cols-3">
                     <div className="col-span-2">
                         <div className="flex flex-col gap-4">
-                            <TransactionsTable transactions={incomes} />
+                            <TransactionsTable
+                                transactions={incomes}
+                                type="income"
+                            />
                         </div>
                     </div>
                     <div></div>

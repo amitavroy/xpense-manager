@@ -20,19 +20,35 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../components/ui/select';
-import { destroy, store, update } from '../routes/transactions';
-import { AccountDropdown, CategoryDropdown, Transaction } from '../types';
+import {
+    destroy as destroyIncome,
+    store as storeIncome,
+    update as updateIncome,
+} from '../routes/incomes';
+import {
+    destroy as destroyTransaction,
+    store as storeTransaction,
+    update as updateTransaction,
+} from '../routes/transactions';
+import {
+    AccountDropdown,
+    CategoryDropdown,
+    Transaction,
+    TransactionType,
+} from '../types';
 
 interface TransactionAddFormProps {
     accounts: AccountDropdown[];
     categories: CategoryDropdown[];
     transaction: Transaction;
+    type: TransactionType;
 }
 
 export default function TransactionForm({
     accounts,
     categories,
     transaction,
+    type,
 }: TransactionAddFormProps) {
     const isEdit = transaction.id !== undefined;
     const { data, setData, post, put, processing, errors, reset } = useForm({
@@ -51,7 +67,14 @@ export default function TransactionForm({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const url = isEdit ? update(transaction.id).url : store().url;
+        const url =
+            type === 'income'
+                ? isEdit
+                    ? updateIncome(transaction.id).url
+                    : storeIncome().url
+                : isEdit
+                  ? updateTransaction(transaction.id).url
+                  : storeTransaction().url;
 
         if (isEdit) {
             put(url);
@@ -64,7 +87,12 @@ export default function TransactionForm({
         }
     };
 
-    const handleDelete = () => router.delete(destroy(transaction.id).url);
+    const handleDelete = () =>
+        router.delete(
+            type === 'income'
+                ? destroyIncome(transaction.id).url
+                : destroyTransaction(transaction.id).url,
+        );
 
     return (
         <Card>

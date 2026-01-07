@@ -51,13 +51,13 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative col-span-2 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative col-span-full overflow-hidden rounded-xl border border-sidebar-border/70 md:col-span-2 dark:border-sidebar-border">
                         <TransactionsTable
                             transactions={transactions}
                             type="expense"
                         />
                     </div>
-                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative col-span-full overflow-hidden rounded-xl border border-sidebar-border/70 md:col-span-1 dark:border-sidebar-border">
                         <AccountsTable accounts={accounts} fullView={false} />
                     </div>
                 </div>

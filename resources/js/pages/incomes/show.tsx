@@ -4,58 +4,58 @@ import TransactionForm from '../../forms/transaction-form';
 import AppLayout from '../../layouts/app-layout';
 import { index } from '../../routes/incomes';
 import {
-    AccountDropdown,
-    BreadcrumbItem,
-    CategoryDropdown,
-    Transaction,
+  AccountDropdown,
+  BreadcrumbItem,
+  CategoryDropdown,
+  Transaction,
 } from '../../types';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Incomes',
-        href: index().url,
-    },
-    {
-        title: 'Income Details',
-        href: '#',
-    },
+  {
+    title: 'Incomes',
+    href: index().url,
+  },
+  {
+    title: 'Income Details',
+    href: '#',
+  },
 ];
 
 interface IncomesShowProps {
-    accounts: AccountDropdown[];
-    categories: CategoryDropdown[];
-    transaction: Transaction;
+  accounts: AccountDropdown[];
+  categories: CategoryDropdown[];
+  transaction: Transaction;
 }
 
 export default function TransactionsShowPage({
-    accounts,
-    categories,
-    transaction,
+  accounts,
+  categories,
+  transaction,
 }: IncomesShowProps) {
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Income Details" />
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Income Details" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Heading
-                    title="Income Details"
-                    description="View the details of an income"
-                />
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <Heading
+          title="Income Details"
+          description="View the details of an income"
+        />
 
-                <div className="grid grid-cols-4">
-                    <div className="col-span-3 lg:col-span-2">
-                        <div className="flex flex-col gap-4">
-                            <TransactionForm
-                                accounts={accounts}
-                                categories={categories}
-                                transaction={transaction}
-                                type="income"
-                            />
-                        </div>
-                    </div>
-                    <div></div>
-                </div>
+        <div className="grid grid-cols-4">
+          <div className="col-span-3 lg:col-span-2">
+            <div className="flex flex-col gap-4">
+              <TransactionForm
+                accounts={accounts}
+                categories={categories}
+                transaction={transaction}
+                type="income"
+              />
             </div>
-        </AppLayout>
-    );
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </AppLayout>
+  );
 }

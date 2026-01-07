@@ -8,46 +8,42 @@ import TransactionsTable from '../../tables/transactions-table';
 import { BreadcrumbItem, PaginateData, Transaction } from '../../types';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Incomes',
-        href: incomeRoutes.index().url,
-    },
+  {
+    title: 'Incomes',
+    href: incomeRoutes.index().url,
+  },
 ];
 
 interface IncomesIndexProps {
-    incomes: PaginateData<Transaction>;
+  incomes: PaginateData<Transaction>;
 }
 
 export default function IncomesIndexPage({ incomes }: IncomesIndexProps) {
-    const goToAddIncomePage = () => {
-        router.visit(incomeRoutes.create().url);
-    };
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Incomes" />
+  const goToAddIncomePage = () => {
+    router.visit(incomeRoutes.create().url);
+  };
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Incomes" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Heading title="Incomes" description="All my incomes" />
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <Heading title="Incomes" description="All my incomes" />
 
-                <div className="flex w-full justify-end">
-                    <Button onClick={goToAddIncomePage}>
-                        <PlusIcon />
-                        Add Income
-                    </Button>
-                </div>
+        <div className="flex w-full justify-end">
+          <Button onClick={goToAddIncomePage}>
+            <PlusIcon />
+            Add Income
+          </Button>
+        </div>
 
-                <div className="grid grid-cols-3">
-                    <div className="col-span-2">
-                        <div className="flex flex-col gap-4">
-                            <TransactionsTable
-                                transactions={incomes}
-                                type="income"
-                            />
-                        </div>
-                    </div>
-                    <div></div>
-                </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="col-span-full md:col-span-2">
+            <div className="flex flex-col gap-4">
+              <TransactionsTable transactions={incomes} type="income" />
             </div>
-        </AppLayout>
-    );
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  );
 }

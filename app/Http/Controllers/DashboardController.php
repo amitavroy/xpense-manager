@@ -14,7 +14,7 @@ class DashboardController extends Controller
     public function __invoke(GetPendingBillsAction $getPendingBillsAction): Response
     {
         $transactions = Transaction::query()
-            ->with(['account', 'category'])
+            ->with(['account', 'category', 'user'])
             ->orderByDesc('date')
             ->orderByDesc('id')
             ->paginate(10);

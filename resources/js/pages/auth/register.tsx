@@ -4,13 +4,13 @@ import { Head } from '@inertiajs/react';
 import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
-    return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
-        >
-            <Head title="Register" />
-            {/* <Form
+  return (
+    <AuthLayout
+      title="Create an account"
+      description="Enter your details below to create your account"
+    >
+      <Head title="Register" />
+      {/* <Form
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
@@ -105,6 +105,6 @@ export default function Register() {
                     </>
                 )}
             </Form> */}
-        </AuthLayout>
-    );
+    </AuthLayout>
+  );
 }

@@ -8,48 +8,48 @@ import CategoryTable from '../../tables/category-table';
 import { BreadcrumbItem, Category, PaginateData } from '../../types';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Categories',
-        href: index().url,
-    },
+  {
+    title: 'Categories',
+    href: index().url,
+  },
 ];
 
 interface CategoriesIndexProps {
-    categories: PaginateData<Category>;
+  categories: PaginateData<Category>;
 }
 
 export default function CategoriesIndexPage({
-    categories,
+  categories,
 }: CategoriesIndexProps) {
-    const goToAddCategoryPage = () => {
-        router.visit(create().url);
-    };
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Categories" />
+  const goToAddCategoryPage = () => {
+    router.visit(create().url);
+  };
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Categories" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Heading
-                    title="Transactions"
-                    description="All my transactions transactions"
-                />
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <Heading
+          title="Transactions"
+          description="All my transactions transactions"
+        />
 
-                <div className="flex w-full justify-end">
-                    <Button onClick={goToAddCategoryPage}>
-                        <PlusIcon />
-                        Add Category
-                    </Button>
-                </div>
+        <div className="flex w-full justify-end">
+          <Button onClick={goToAddCategoryPage}>
+            <PlusIcon />
+            Add Category
+          </Button>
+        </div>
 
-                <div className="grid grid-cols-3">
-                    <div className="col-span-2">
-                        <div className="flex flex-col gap-4">
-                            <CategoryTable categories={categories} />
-                        </div>
-                    </div>
-                    <div></div>
-                </div>
+        <div className="grid grid-cols-3">
+          <div className="col-span-2">
+            <div className="flex flex-col gap-4">
+              <CategoryTable categories={categories} />
             </div>
-        </AppLayout>
-    );
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </AppLayout>
+  );
 }

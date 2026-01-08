@@ -1,6 +1,11 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
+export interface ExpenseStats {
+  currentMonthTotalExpense: number;
+  previousMonthTotalExpense: number;
+}
+
 export interface Bill {
   id: number;
   user_id: number;

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Queries\TransactionQuery;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 test('recentTransactions returns a builder instance', function () {
@@ -267,4 +268,235 @@ test('whereCategoryType can be chained with recentTransactions', function () {
     expect($filtered->first()->category->type)->toBe(TransactionTypeEnum::EXPENSE);
     expect($filtered->first()->relationLoaded('account'))->toBeTrue();
     expect($filtered->first()->relationLoaded('category'))->toBeTrue();
+});
+
+test('getTotalExpenseForMonth returns correct total for a specific month', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 100.50,
+        'date' => '2024-01-15',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 200.75,
+        'date' => '2024-01-20',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-01-15'));
+
+    expect($result)->toBe(301.25);
+});
+
+test('getTotalExpenseForMonth only includes expense transactions', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 100.00,
+        'date' => '2024-01-15',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'amount' => 500.00,
+        'date' => '2024-01-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-01-15'));
+
+    expect($result)->toBe(100.00);
+});
+
+test('getTotalExpenseForMonth correctly filters by date range', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 100.00,
+        'date' => '2024-01-01',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 200.00,
+        'date' => '2024-01-31',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 300.00,
+        'date' => '2024-02-01',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 400.00,
+        'date' => '2023-12-31',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-01-15'));
+
+    expect($result)->toBe(300.00);
+});
+
+test('getTotalExpenseForMonth returns zero when there are no expenses', function () {
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-01-15'));
+
+    expect($result)->toBe(0.0);
+});
+
+test('getTotalExpenseForMonth works with Carbon instance parameter', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 150.00,
+        'date' => '2024-03-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-03-15'));
+
+    expect($result)->toBe(150.00);
+});
+
+test('getTotalExpenseForMonth works with string parameter', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 250.00,
+        'date' => '2024-04-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, '2024-04-15');
+
+    expect($result)->toBe(250.00);
+});
+
+test('getTotalExpenseForMonth handles transactions on first and last day of month', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 50.00,
+        'date' => '2024-05-01',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 75.00,
+        'date' => '2024-05-31',
+    ]);
+
+    $query = new TransactionQuery;
+    $reflection = new ReflectionClass($query);
+    $method = $reflection->getMethod('getTotalExpenseForMonth');
+    $method->setAccessible(true);
+
+    $result = $method->invoke($query, Carbon::parse('2024-05-15'));
+
+    expect($result)->toBe(125.00);
+});
+
+test('expenseStats returns current and previous month totals', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+    $previousMonth = Carbon::now()->subMonth();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 100.00,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'amount' => 200.00,
+        'date' => $previousMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $result = $query->expenseStats();
+
+    expect($result)->toHaveKey('currentMonthTotalExpense');
+    expect($result)->toHaveKey('previousMonthTotalExpense');
+    expect($result['currentMonthTotalExpense'])->toBe(100.00);
+    expect($result['previousMonthTotalExpense'])->toBe(200.00);
 });

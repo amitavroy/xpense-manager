@@ -25,10 +25,13 @@ class DashboardController extends Controller
 
         $pendingBills = $getPendingBillsAction->execute();
 
+        $expenseStats = $transactionQuery->expenseStats();
+
         return Inertia::render('dashboard', [
             'transactions' => $transactions,
             'accounts' => $accounts,
             'pendingBills' => $pendingBills,
+            'expenseStats' => $expenseStats,
         ]);
     }
 }

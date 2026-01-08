@@ -39,8 +39,8 @@ export default function TransactionsCreatePage({
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <Heading title="Add Transaction" description="Add a new transaction" />
 
-        <div className="grid grid-cols-4">
-          <div className="col-span-3 lg:col-span-2">
+        <div className="w-full lg:grid lg:grid-cols-4">
+          <div className="lg:col-span-2">
             <div className="flex flex-col gap-4">
               <TransactionForm
                 accounts={accounts}
@@ -50,7 +50,6 @@ export default function TransactionsCreatePage({
               />
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </AppLayout>

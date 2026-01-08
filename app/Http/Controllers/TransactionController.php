@@ -8,6 +8,7 @@ use App\Enums\TransactionTypeEnum;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Transaction;
+use App\Queries\TransactionQuery;
 use App\Services\DropdownService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -19,18 +20,15 @@ use Inertia\Response;
 class TransactionController extends Controller
 {
     public function __construct(
-        private readonly DropdownService $dropdownService
+        private readonly DropdownService $dropdownService,
+        private readonly TransactionQuery $transactionQuery
     ) {}
 
     public function index(): Response
     {
-        $transactions = Transaction::query()
-            ->with(['account', 'category'])
-            ->whereHas('category', function ($query) {
-                $query->where('type', TransactionTypeEnum::EXPENSE);
-            })
-            ->orderByDesc('date')
-            ->orderByDesc('id')
+        $transactions = $this->transactionQuery
+            ->recentTransactions()
+            ->whereCategoryType(TransactionTypeEnum::EXPENSE)
             ->paginate(10);
 
         return Inertia::render('transactions/index', [

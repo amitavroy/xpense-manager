@@ -38,6 +38,7 @@ export default function TransactionsTable({
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Date</TableHead>
+            <TableHead>User</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Account</TableHead>
@@ -53,6 +54,7 @@ export default function TransactionsTable({
             >
               <TableCell>{transaction.id}</TableCell>
               <TableCell>{formatDate(transaction.date)}</TableCell>
+              <TableCell>{transaction.user?.name}</TableCell>
               <TableCell>{transaction.description}</TableCell>
               <TableCell>{transaction.category?.name}</TableCell>
               <TableCell>{transaction.account?.name}</TableCell>

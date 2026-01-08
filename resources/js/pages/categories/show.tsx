@@ -31,13 +31,12 @@ export default function CategoriesShowPage({ category }: CategoriesShowProps) {
           description="View the details of a category"
         />
 
-        <div className="grid grid-cols-4">
-          <div className="col-span-3 lg:col-span-2">
+        <div className="w-full lg:grid lg:grid-cols-4">
+          <div className="lg:col-span-2">
             <div className="flex flex-col gap-4">
               <CategoryForm category={category} />
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </AppLayout>

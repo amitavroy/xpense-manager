@@ -42,8 +42,8 @@ export default function TransactionsShowPage({
           description="View the details of an income"
         />
 
-        <div className="grid grid-cols-4">
-          <div className="col-span-3 lg:col-span-2">
+        <div className="w-full lg:grid lg:grid-cols-4">
+          <div className="lg:col-span-2">
             <div className="flex flex-col gap-4">
               <TransactionForm
                 accounts={accounts}
@@ -53,7 +53,6 @@ export default function TransactionsShowPage({
               />
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </AppLayout>

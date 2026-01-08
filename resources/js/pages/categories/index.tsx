@@ -29,10 +29,7 @@ export default function CategoriesIndexPage({
       <Head title="Categories" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <Heading
-          title="Transactions"
-          description="All my transactions transactions"
-        />
+        <Heading title="Categories" description="All my categories" />
 
         <div className="flex w-full justify-end">
           <Button onClick={goToAddCategoryPage}>
@@ -41,13 +38,12 @@ export default function CategoriesIndexPage({
           </Button>
         </div>
 
-        <div className="grid grid-cols-3">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="col-span-full md:col-span-2">
             <div className="flex flex-col gap-4">
               <CategoryTable categories={categories} />
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </AppLayout>

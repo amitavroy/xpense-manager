@@ -31,13 +31,12 @@ export default function AccountsShowPage({ account }: AccountsShowProps) {
           description="View the details of an account"
         />
 
-        <div className="grid grid-cols-4">
-          <div className="col-span-3 lg:col-span-2">
+        <div className="w-full lg:grid lg:grid-cols-4">
+          <div className="lg:col-span-2">
             <div className="flex flex-col gap-4">
               <AccountForm account={account} />
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </AppLayout>

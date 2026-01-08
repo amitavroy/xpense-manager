@@ -36,12 +36,8 @@ export default function IncomesIndexPage({ incomes }: IncomesIndexProps) {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-full md:col-span-2">
-            <div className="flex flex-col gap-4">
-              <TransactionsTable transactions={incomes} type="income" />
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          <TransactionsTable transactions={incomes} type="income" />
         </div>
       </div>
     </AppLayout>

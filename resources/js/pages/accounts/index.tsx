@@ -37,12 +37,8 @@ export default function AccountsIndexPage({ accounts }: AccountsIndexProps) {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-full md:col-span-2">
-            <div className="flex flex-col gap-4">
-              <AccountsTable accounts={accounts} />
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          <AccountsTable accounts={accounts} />
         </div>
       </div>
     </AppLayout>

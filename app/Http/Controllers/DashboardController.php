@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\GetPendingBillsAction;
-use App\Models\Account;
-use App\Queries\TransactionQuery;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Account;
+use App\Queries\TransactionQuery;
+use App\Enums\TransactionTypeEnum;
+use Illuminate\Support\Facades\Auth;
+use App\Actions\GetPendingBillsAction;
 
 class DashboardController extends Controller
 {
@@ -15,7 +16,9 @@ class DashboardController extends Controller
         GetPendingBillsAction $getPendingBillsAction,
         TransactionQuery $transactionQuery
     ): Response {
-        $transactions = $transactionQuery->recentTransactions()
+        $transactions = $transactionQuery
+            ->recentTransactions()
+            ->whereCategoryType(TransactionTypeEnum::EXPENSE)
             ->paginate(10);
 
         $accounts = Account::query()

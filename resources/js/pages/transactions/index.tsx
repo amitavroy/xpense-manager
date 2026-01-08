@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import Heading from '../../components/heading';
+import Pagination from '../../components/pagination';
 import { Button } from '../../components/ui/button';
 import AppLayout from '../../layouts/app-layout';
 import { create, index } from '../../routes/transactions';
@@ -43,6 +44,7 @@ export default function TransactionsIndexPage({
 
         <div className="flex flex-col gap-4">
           <TransactionsTable transactions={transactions} type="expense" />
+          <Pagination paginatedData={transactions} />
         </div>
       </div>
     </AppLayout>

@@ -10,5 +10,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(GeneratePendingBillInstance::class)
-    ->everyMinute()
+    ->everyFiveMinutes()
     ->withoutOverlapping();

@@ -37,15 +37,28 @@ class TripExpenseController extends Controller
         ]);
     }
 
-    public function store(StoreTripExpenseRequest $request, Trip $trip, AddTripExpenseAction $addTripExpenseAction): RedirectResponse
-    {
+    public function store(
+        StoreTripExpenseRequest $request,
+        Trip $trip,
+        AddTripExpenseAction $addTripExpenseAction
+    ): RedirectResponse {
         $this->authorizeTripAccess($trip);
 
         $data = $request->validated();
         $sharedWithUserIds = $data['shared_with'] ?? [];
         unset($data['shared_with']);
 
-        $addTripExpenseAction->execute($data, $trip, Auth::user(), $sharedWithUserIds);
+        $addTripExpenseAction->execute(
+            data: $data,
+            trip: $trip,
+            user: Auth::user(),
+            sharedWithUserIds: $sharedWithUserIds
+        );
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Expense created successfully!',
+        ]);
 
         return redirect()->route('trips.show', $trip);
     }
@@ -63,8 +76,12 @@ class TripExpenseController extends Controller
         ]);
     }
 
-    public function update(UpdateTripExpenseRequest $request, Trip $trip, TripExpense $tripExpense, UpdateTripExpenseAction $updateTripExpenseAction): RedirectResponse
-    {
+    public function update(
+        UpdateTripExpenseRequest $request,
+        Trip $trip,
+        TripExpense $tripExpense,
+        UpdateTripExpenseAction $updateTripExpenseAction
+    ): RedirectResponse {
         abort_if($tripExpense->trip_id !== $trip->id, 404);
         $this->authorizeTripAccess($trip);
 
@@ -72,17 +89,34 @@ class TripExpenseController extends Controller
         $sharedWithUserIds = $data['shared_with'] ?? [];
         unset($data['shared_with']);
 
-        $updateTripExpenseAction->execute($tripExpense, $data, $sharedWithUserIds);
+        $updateTripExpenseAction->execute(
+            tripExpense: $tripExpense,
+            data: $data,
+            sharedWithUserIds: $sharedWithUserIds
+        );
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Expense updated successfully!',
+        ]);
 
         return redirect()->route('trips.show', $trip);
     }
 
-    public function destroy(Trip $trip, TripExpense $tripExpense, DeleteTripExpenseAction $deleteTripExpenseAction): RedirectResponse
-    {
+    public function destroy(
+        Trip $trip,
+        TripExpense $tripExpense,
+        DeleteTripExpenseAction $deleteTripExpenseAction
+    ): RedirectResponse {
         abort_if($tripExpense->trip_id !== $trip->id, 404);
         $this->authorizeTripAccess($trip);
 
         $deleteTripExpenseAction->execute($tripExpense);
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Expense deleted successfully!',
+        ]);
 
         return redirect()->route('trips.show', $trip);
     }

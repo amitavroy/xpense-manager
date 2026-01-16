@@ -35,7 +35,10 @@ class TripController extends Controller
 
     public function create(): Response
     {
-        $users = $this->tripQuery->getTripMembers()->get();
+        $users = $this->tripQuery
+            ->getTripMembers()
+            ->orderBy('name')
+            ->get();
 
         $trip = new Trip;
 
@@ -52,6 +55,11 @@ class TripController extends Controller
         unset($data['user_ids']);
 
         $trip = $addTripAction->execute($data, Auth::user(), $userIds);
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Trip created successfully!',
+        ]);
 
         return redirect()->route('trips.show', $trip);
     }
@@ -116,6 +124,11 @@ class TripController extends Controller
 
         $updateTripAction->execute($trip, $data, $userIds);
 
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Trip updated successfully!',
+        ]);
+
         return redirect()->route('trips.show', $trip);
     }
 
@@ -124,6 +137,11 @@ class TripController extends Controller
         abort_if($trip->user_id !== Auth::user()->id, 403);
 
         $deleteTripAction->execute($trip);
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Trip deleted successfully!',
+        ]);
 
         return redirect()->route('trips.index');
     }

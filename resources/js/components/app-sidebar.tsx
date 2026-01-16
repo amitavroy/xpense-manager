@@ -17,10 +17,12 @@ import categories from '@/routes/categories';
 import incomes from '@/routes/incomes';
 import transactions from '@/routes/transactions';
 import { index as indexTrips } from '@/routes/trips';
+import { index as indexVehicles } from '@/routes/vehicles';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
   Banknote,
+  Bike,
   BookOpen,
   Building,
   CreditCard,
@@ -70,6 +72,12 @@ const mainNavItems: NavItem[] = [
     title: 'Trips',
     href: indexTrips().url,
     icon: Plane,
+    prefetch: true,
+  },
+  {
+    title: 'Vehicles',
+    href: indexVehicles().url,
+    icon: Bike,
     prefetch: true,
   },
 ];

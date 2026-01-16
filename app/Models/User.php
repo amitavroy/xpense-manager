@@ -73,4 +73,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(TripExpense::class, 'trip_expense_user');
     }
+
+    public function vehicles(): HasMany
+    {
+        return $this->hasMany(Vehicle::class);
+    }
 }

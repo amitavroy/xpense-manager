@@ -208,3 +208,38 @@ export interface UserDropdown {
   id: number;
   name: string;
 }
+
+export interface Vehicle {
+  id?: number;
+  user_id: number;
+  name: string;
+  company_name: string;
+  registration_number: string;
+  kilometers: number;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
+  user?: User;
+}
+
+export interface VehicleDropdown {
+  id: number;
+  name: string;
+}
+
+export interface FuelEntry {
+  id?: number;
+  user_id?: number;
+  vehicle_id?: number;
+  account_id?: number;
+  date?: string;
+  odometer_reading?: number;
+  fuel_quantity?: number;
+  amount?: number;
+  petrol_station_name?: string;
+  created_at?: string;
+  updated_at?: string;
+  vehicle?: Vehicle;
+  account?: Account;
+  user?: User;
+}

@@ -6,10 +6,12 @@ use App\Http\Controllers\BillerController;
 use App\Http\Controllers\BillPaymentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FuelEntryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripExpenseController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -48,6 +50,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('trips.expenses', TripExpenseController::class)
         ->except(['edit', 'create'])
         ->parameters(['expenses' => 'tripExpense']);
+
+    Route::resource('vehicles', VehicleController::class);
+
+    Route::get('fuel-entry', [FuelEntryController::class, 'create'])->name('fuel-entry.create');
+    Route::post('fuel-entry', [FuelEntryController::class, 'store'])->name('fuel-entry.store');
 });
 
 require __DIR__.'/settings.php';

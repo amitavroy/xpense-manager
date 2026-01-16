@@ -24,6 +24,15 @@ class TransactionQuery
             ->orderByDesc('id');
     }
 
+    public function incomes(): Builder
+    {
+        return Transaction::query()
+            ->with(['account', 'category'])
+            ->whereCategoryType(TransactionTypeEnum::INCOME)
+            ->orderByDesc('date')
+            ->orderByDesc('id');
+    }
+
     public function expenseStats(): Collection
     {
         // get current month total expense

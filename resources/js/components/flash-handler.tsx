@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import { usePage } from '@inertiajs/react';
+import { useEffect, useRef } from 'react';
 
 /**
  * FlashHandler dispatches the initial flash event on page load
@@ -24,7 +24,8 @@ export function FlashHandler() {
       });
       document.dispatchEvent(event);
     }
-  }, []); // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount - flash is intentionally excluded to prevent re-dispatching
 
   return null;
 }

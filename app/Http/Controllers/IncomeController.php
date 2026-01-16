@@ -6,7 +6,9 @@ use App\Actions\AddTransactionAction;
 use App\Enums\TransactionTypeEnum;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Models\Transaction;
+use App\Queries\TransactionQuery;
 use App\Services\DropdownService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
@@ -16,7 +18,8 @@ use Inertia\Response;
 class IncomeController extends Controller
 {
     public function __construct(
-        private readonly DropdownService $dropdownService
+        private readonly DropdownService $dropdownService,
+        private readonly TransactionQuery $transactionQuery
     ) {}
 
     /**
@@ -24,13 +27,8 @@ class IncomeController extends Controller
      */
     public function index(): Response
     {
-        $incomes = Transaction::query()
-            ->with(['account', 'category'])
-            ->whereHas('category', function ($query) {
-                $query->where('type', TransactionTypeEnum::INCOME);
-            })
-            ->orderByDesc('date')
-            ->orderByDesc('id')
+        $incomes = $this->transactionQuery
+            ->incomes()
             ->paginate(10);
 
         return Inertia::render('incomes/index', [
@@ -58,7 +56,7 @@ class IncomeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTransactionRequest $request, AddTransactionAction $addTransactionAction)
+    public function store(StoreTransactionRequest $request, AddTransactionAction $addTransactionAction): RedirectResponse
     {
         $user = Auth::user();
         $data = $request->validated();
@@ -67,6 +65,11 @@ class IncomeController extends Controller
         $account = Context::pull('account');
 
         $transaction = $addTransactionAction->execute($data, $category, $account, $user);
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Income created successfully!',
+        ]);
 
         return redirect()->route('incomes.show', $transaction);
     }

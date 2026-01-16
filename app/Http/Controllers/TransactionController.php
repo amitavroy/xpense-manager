@@ -48,8 +48,11 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function update(UpdateTransactionRequest $request, Transaction $transaction, UpdateTransactionAction $action)
-    {
+    public function update(
+        UpdateTransactionRequest $request,
+        Transaction $transaction,
+        UpdateTransactionAction $action
+    ): RedirectResponse {
         $data = $request->validated();
 
         // Pull the data from context
@@ -69,6 +72,11 @@ class TransactionController extends Controller
             oldAmount: $oldAmount,
         );
 
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Transaction updated successfully!',
+        ]);
+
         return redirect()->route('transactions.show', $transaction);
     }
 
@@ -86,8 +94,10 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function store(StoreTransactionRequest $request, AddTransactionAction $action): RedirectResponse
-    {
+    public function store(
+        StoreTransactionRequest $request,
+        AddTransactionAction $action
+    ): RedirectResponse {
         $user = Auth::user();
         $data = $request->validated();
 
@@ -96,6 +106,11 @@ class TransactionController extends Controller
 
         // create the transaction
         $transaction = $action->execute($data, $category, $account, $user);
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Transaction created successfully!',
+        ]);
 
         return redirect()->route('transactions.show', $transaction);
     }
@@ -120,6 +135,11 @@ class TransactionController extends Controller
 
             $transaction->delete();
         });
+
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Transaction deleted successfully!',
+        ]);
 
         return redirect()->route('transactions.index');
     }

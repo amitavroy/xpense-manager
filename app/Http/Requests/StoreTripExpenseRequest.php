@@ -61,7 +61,11 @@ class StoreTripExpenseRequest extends FormRequest
 
                 // Validate shared_with users are trip members
                 if ($data['is_shared'] && isset($data['shared_with']) && is_array($data['shared_with'])) {
-                    $tripMemberIds = $trip->members()->pluck('users.id')->push($trip->user_id)->unique()->toArray();
+                    $tripMemberIds = $trip->members()
+                        ->pluck('users.id')
+                        ->push($trip->user_id)
+                        ->unique()
+                        ->toArray();
 
                     foreach ($data['shared_with'] as $userId) {
                         if (! in_array($userId, $tripMemberIds)) {

@@ -500,3 +500,144 @@ test('expenseStats returns current and previous month totals', function () {
     expect($result['currentMonthTotalExpense'])->toBe(100.00);
     expect($result['previousMonthTotalExpense'])->toBe(200.00);
 });
+
+test('incomes returns a builder instance', function () {
+    $query = new TransactionQuery;
+
+    $result = $query->incomes();
+
+    expect($result)->toBeInstanceOf(Builder::class);
+});
+
+test('incomes eager loads account relationship', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+    ]);
+
+    $query = new TransactionQuery;
+    $incomes = $query->incomes()->get();
+
+    expect($incomes)->not->toBeEmpty();
+    expect($incomes->first()->relationLoaded('account'))->toBeTrue();
+    expect($incomes->first()->account)->toBeInstanceOf(Account::class);
+});
+
+test('incomes eager loads category relationship', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+    ]);
+
+    $query = new TransactionQuery;
+    $incomes = $query->incomes()->get();
+
+    expect($incomes)->not->toBeEmpty();
+    expect($incomes->first()->relationLoaded('category'))->toBeTrue();
+    expect($incomes->first()->category)->toBeInstanceOf(Category::class);
+});
+
+test('incomes filters only income transactions', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+    ]);
+
+    $query = new TransactionQuery;
+    $incomes = $query->incomes()->get();
+
+    expect($incomes)->toHaveCount(1);
+    expect($incomes->first()->category_id)->toBe($incomeCategory->id);
+    expect($incomes->first()->category->type)->toBe(TransactionTypeEnum::INCOME);
+});
+
+test('incomes orders by date descending', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    $olderIncome = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'date' => '2024-01-01',
+    ]);
+
+    $newerIncome = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $incomes = $query->incomes()->get();
+
+    expect($incomes->first()->id)->toBe($newerIncome->id);
+    expect($incomes->last()->id)->toBe($olderIncome->id);
+});
+
+test('incomes orders by id descending when dates are the same', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    $firstIncome = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    $secondIncome = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $incomes = $query->incomes()->get();
+
+    expect($incomes->first()->id)->toBe($secondIncome->id);
+    expect($incomes->skip(1)->first()->id)->toBe($firstIncome->id);
+});
+
+test('incomes can be paginated', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    Transaction::factory()->count(15)->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+    ]);
+
+    $query = new TransactionQuery;
+    $paginated = $query->incomes()->paginate(10);
+
+    expect($paginated->items())->toHaveCount(10);
+    expect($paginated->total())->toBe(15);
+    expect($paginated->hasMorePages())->toBeTrue();
+});

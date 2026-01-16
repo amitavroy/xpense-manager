@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,5 +52,25 @@ class User extends Authenticatable
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
+    }
+
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class);
+    }
+
+    public function memberTrips(): BelongsToMany
+    {
+        return $this->belongsToMany(Trip::class, 'trip_user');
+    }
+
+    public function tripExpenses(): HasMany
+    {
+        return $this->hasMany(TripExpense::class, 'paid_by');
+    }
+
+    public function sharedTripExpenses(): BelongsToMany
+    {
+        return $this->belongsToMany(TripExpense::class, 'trip_expense_user');
     }
 }

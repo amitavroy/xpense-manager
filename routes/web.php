@@ -8,6 +8,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TripController;
+use App\Http\Controllers\TripExpenseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,6 +41,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('incomes', IncomeController::class)
         ->except(['edit'])
         ->parameters(['incomes' => 'transaction']);
+
+    Route::resource('trips', TripController::class)
+        ->except(['edit']);
+
+    Route::resource('trips.expenses', TripExpenseController::class)
+        ->except(['edit', 'create'])
+        ->parameters(['expenses' => 'tripExpense']);
 });
 
 require __DIR__.'/settings.php';

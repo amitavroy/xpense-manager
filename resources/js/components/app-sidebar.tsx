@@ -16,6 +16,7 @@ import biller from '@/routes/billers';
 import categories from '@/routes/categories';
 import incomes from '@/routes/incomes';
 import transactions from '@/routes/transactions';
+import { index as indexTrips } from '@/routes/trips';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
@@ -25,6 +26,7 @@ import {
   CreditCard,
   Folder,
   LayoutGrid,
+  Plane,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -62,6 +64,12 @@ const mainNavItems: NavItem[] = [
     title: 'Billers',
     href: biller.index().url,
     icon: Building,
+    prefetch: true,
+  },
+  {
+    title: 'Trips',
+    href: indexTrips().url,
+    icon: Plane,
     prefetch: true,
   },
 ];

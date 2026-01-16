@@ -169,3 +169,42 @@ export interface CategoryDropdown {
   id: number;
   name: string;
 }
+
+export interface Trip {
+  id: number;
+  user_id: number;
+  name: string;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  updated_at: string;
+  user?: User;
+  members?: User[];
+  expenses?: TripExpense[];
+}
+
+export interface TripExpense {
+  id: number;
+  trip_id: number;
+  paid_by: number;
+  date: string;
+  amount: number;
+  description: string;
+  is_shared: boolean;
+  created_at: string;
+  updated_at: string;
+  trip?: Trip;
+  paid_by_user?: User;
+  shared_with?: User[];
+}
+
+export interface TripStats {
+  totalExpensesByUser: number;
+  totalSharedExpenses: number;
+  totalNonSharedExpenses: number;
+}
+
+export interface UserDropdown {
+  id: number;
+  name: string;
+}

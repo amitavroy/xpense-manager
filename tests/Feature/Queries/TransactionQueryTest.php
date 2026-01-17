@@ -641,3 +641,409 @@ test('incomes can be paginated', function () {
     expect($paginated->total())->toBe(15);
     expect($paginated->hasMorePages())->toBeTrue();
 });
+
+test('expenses returns a builder instance', function () {
+    $query = new TransactionQuery;
+
+    $result = $query->expenses();
+
+    expect($result)->toBeInstanceOf(Builder::class);
+});
+
+test('expenses filters by expense type only', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    $currentMonth = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses()->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->category->type)->toBe(TransactionTypeEnum::EXPENSE);
+});
+
+test('expenses filters by user_id when provided', function () {
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $account1 = Account::factory()->create(['user_id' => $user1->id]);
+    $account2 = Account::factory()->create(['user_id' => $user2->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user1->id,
+        'account_id' => $account1->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user2->id,
+        'account_id' => $account2->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(userId: $user1->id)->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->user_id)->toBe($user1->id);
+});
+
+test('expenses defaults to current month when no dates provided', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+    $previousMonth = Carbon::now()->subMonth();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $previousMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses()->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m'))->toBe($currentMonth->format('Y-m'));
+});
+
+test('expenses filters by from_date', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-05',
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(fromDate: '2024-01-10')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe('2024-01-15');
+});
+
+test('expenses filters by to_date', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(25)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(toDate: $currentMonth->copy()->day(20)->format('Y-m-d'))->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe($currentMonth->copy()->day(15)->format('Y-m-d'));
+});
+
+test('expenses filters by date range', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-05',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-25',
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(fromDate: '2024-01-10', toDate: '2024-01-20')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe('2024-01-15');
+});
+
+test('expenses includes boundary dates', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-10',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-20',
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(fromDate: '2024-01-10', toDate: '2024-01-20')->get();
+
+    expect($expenses)->toHaveCount(2);
+});
+
+test('expenses preset last_30_days filters correctly', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->subDays(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->subDays(35)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(preset: 'last_30_days')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe($now->copy()->subDays(15)->format('Y-m-d'));
+});
+
+test('expenses preset this_month filters correctly', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+    $previousMonth = $now->copy()->subMonth();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $previousMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(preset: 'this_month')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m'))->toBe($now->format('Y-m'));
+});
+
+test('expenses preset last_month filters correctly', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+    $previousMonth = $now->copy()->subMonth();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $previousMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(preset: 'last_month')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m'))->toBe($previousMonth->format('Y-m'));
+});
+
+test('expenses preset last_week filters correctly', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->subDays(3)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->subDays(10)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(preset: 'last_week')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe($now->copy()->subDays(3)->format('Y-m-d'));
+});
+
+test('expenses preset overrides manual dates', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+    $previousMonth = $now->copy()->subMonth();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $now->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $previousMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(
+        fromDate: $previousMonth->copy()->startOfMonth()->format('Y-m-d'),
+        toDate: $previousMonth->copy()->endOfMonth()->format('Y-m-d'),
+        preset: 'this_month'
+    )->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m'))->toBe($now->format('Y-m'));
+});
+
+test('expenses eager loads relationships', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses()->get();
+
+    expect($expenses)->not->toBeEmpty();
+    expect($expenses->first()->relationLoaded('account'))->toBeTrue();
+    expect($expenses->first()->relationLoaded('category'))->toBeTrue();
+    expect($expenses->first()->relationLoaded('user'))->toBeTrue();
+});
+
+test('expenses orders by date descending then id descending', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $currentMonth = Carbon::now();
+
+    $olderTransaction = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $newerTransaction = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => $currentMonth->copy()->day(20)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses()->get();
+
+    expect($expenses->first()->id)->toBe($newerTransaction->id);
+    expect($expenses->last()->id)->toBe($olderTransaction->id);
+});

@@ -26,13 +26,49 @@ class TransactionController extends Controller
 
     public function index(): Response
     {
+        $userId = request()->integer('user_id', 0) ?: null;
+        $userIdsParam = request()->get('user_ids');
+        $fromDate = request()->string('from_date', '');
+        $toDate = request()->string('to_date', '');
+        $preset = request()->string('preset', '');
+
+        // Normalize empty strings to null
+        $fromDate = $fromDate === '' ? null : $fromDate;
+        $toDate = $toDate === '' ? null : $toDate;
+        $preset = $preset === '' ? null : $preset;
+
+        // Convert user_ids array to integers and filter out empty values
+        // Handle both array format and single value
+        $userIds = [];
+        if ($userIdsParam !== null) {
+            $userIds = is_array($userIdsParam) ? $userIdsParam : [$userIdsParam];
+        }
+        $userIds = array_filter(array_map('intval', $userIds));
+        $userIds = count($userIds) > 0 ? array_values($userIds) : null;
+
         $transactions = $this->transactionQuery
-            ->recentTransactions()
-            ->whereCategoryType(TransactionTypeEnum::EXPENSE)
-            ->paginate(10);
+            ->expenses(
+                userId: $userId,
+                userIds: $userIds,
+                fromDate: $fromDate,
+                toDate: $toDate,
+                preset: $preset
+            )
+            ->paginate(10)
+            ->withQueryString();
+
+        $users = $this->dropdownService->getUsers();
 
         return Inertia::render('transactions/index', [
             'transactions' => $transactions,
+            'users' => $users,
+            'filters' => [
+                'user_id' => $userId,
+                'user_ids' => $userIds ?? [],
+                'from_date' => $fromDate,
+                'to_date' => $toDate,
+                'preset' => $preset,
+            ],
         ]);
     }
 

@@ -243,3 +243,17 @@ export interface FuelEntry {
   account?: Account;
   user?: User;
 }
+
+export interface ExpenseFilters {
+  user_id?: number | null;
+  user_ids?: number[];
+  from_date?: string | null;
+  to_date?: string | null;
+  preset?: ExpensePreset | null;
+}
+
+export type ExpensePreset =
+  | 'last_30_days'
+  | 'this_month'
+  | 'last_month'
+  | 'last_week';

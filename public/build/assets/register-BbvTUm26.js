@@ -1,0 +1,1 @@
+import{j as t,H as e}from"./app-BCmchfrg.js";import{A as r}from"./auth-layout-hL1rmItd.js";/* empty css            */import"./app-logo-icon-ukpLqipn.js";import"./index-CGZUerCI.js";function n(){return t.jsx(r,{title:"Create an account",description:"Enter your details below to create your account",children:t.jsx(e,{title:"Register"})})}export{n as default};

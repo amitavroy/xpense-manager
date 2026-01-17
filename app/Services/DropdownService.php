@@ -35,4 +35,17 @@ class DropdownService
             ->where('user_id', $user->id)
             ->get();
     }
+
+    /**
+     * Get all users for dropdown
+     *
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return User::query()
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+    }
 }

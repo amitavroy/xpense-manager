@@ -16,15 +16,21 @@ class Account extends Model
         'name',
         'type',
         'balance',
+        'credit_limit',
         'currency',
         'is_active',
         'user_id',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'type' => AccountTypeEnum::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'type' => AccountTypeEnum::class,
+            'balance' => 'decimal:2',
+            'credit_limit' => 'decimal:2',
+        ];
+    }
 
     public function user(): BelongsTo
     {

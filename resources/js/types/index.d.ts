@@ -80,6 +80,7 @@ export interface Account {
   name: string;
   type: AccountType;
   balance: number;
+  credit_limit?: number;
   currency: string;
   is_active: boolean;
   created_at: string;

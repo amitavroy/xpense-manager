@@ -92,7 +92,7 @@ test('can execute add fuel entry action and create expense transaction', functio
 
     // Verify account balance was decremented
     $this->account->refresh();
-    expect($this->account->balance)->toBe((string) ($initialBalance - $data['amount']));
+    expect($this->account->balance)->toBe(number_format($initialBalance - $data['amount'], 2, '.', ''));
 });
 
 test('transaction description is correctly formatted with vehicle name', function () {
@@ -166,7 +166,7 @@ test('fails when fuel category does not exist', function () {
 
     // Verify account balance was not changed
     $this->account->refresh();
-    expect($this->account->balance)->toBe('1000');
+    expect($this->account->balance)->toBe('1000.00');
 });
 
 test('can execute add fuel entry action with different amounts', function () {
@@ -264,7 +264,7 @@ test('can execute add fuel entry action multiple times', function () {
 
     // Verify account balance was decremented twice
     $this->account->refresh();
-    expect($this->account->balance)->toBe((string) (1000 - 2000 - 3500));
+    expect($this->account->balance)->toBe(number_format(1000 - 2000 - 3500, 2, '.', ''));
 });
 
 test('fuel entry action works with different vehicles', function () {
@@ -330,8 +330,8 @@ test('fuel entry action works with different accounts', function () {
     $this->account->refresh();
     $account2->refresh();
 
-    expect($this->account->balance)->toBe((string) (1000 - 2000));
-    expect($account2->balance)->toBe((string) (5000 - 3000));
+    expect($this->account->balance)->toBe(number_format(1000 - 2000, 2, '.', ''));
+    expect($account2->balance)->toBe(number_format(5000 - 3000, 2, '.', ''));
 });
 
 test('updates vehicle kilometers when fuel entry is created', function () {

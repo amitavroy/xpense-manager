@@ -11,6 +11,7 @@ test('account has fillable attributes', function () {
         'name',
         'type',
         'balance',
+        'credit_limit',
         'currency',
         'is_active',
         'user_id',
@@ -23,6 +24,8 @@ test('account has correct casts', function () {
     expect($account->getCasts())->toMatchArray([
         'is_active' => 'boolean',
         'type' => AccountTypeEnum::class,
+        'balance' => 'decimal:2',
+        'credit_limit' => 'decimal:2',
     ]);
 });
 

@@ -33,6 +33,9 @@ export default function AccountsTable({
             <TableHead>Name</TableHead>
             {fullView && <TableHead>Type</TableHead>}
             {fullView && <TableHead>Status</TableHead>}
+            {fullView && (
+              <TableHead className="text-right">Credit limit</TableHead>
+            )}
             <TableHead className="text-right">Balance</TableHead>
           </TableRow>
         </TableHeader>
@@ -54,6 +57,14 @@ export default function AccountsTable({
               {fullView && (
                 <TableCell>
                   {account.is_active ? 'Active' : 'Inactive'}
+                </TableCell>
+              )}
+              {fullView && (
+                <TableCell className="text-right">
+                  {account.type === 'credit_card' &&
+                  account.credit_limit !== undefined
+                    ? formatCurrency(account.credit_limit)
+                    : 'NA'}
                 </TableCell>
               )}
               <TableCell className="text-right">

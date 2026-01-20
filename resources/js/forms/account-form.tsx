@@ -35,6 +35,7 @@ export default function AccountForm({ account }: { account: Account }) {
     name: account.name ? account.name : '',
     type: account.type ? account.type : '',
     balance: account.balance ? account.balance : '',
+    credit_limit: account.credit_limit ? account.credit_limit : '',
   });
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,6 +138,31 @@ export default function AccountForm({ account }: { account: Account }) {
                   />
                 </FieldContent>
               </Field>
+
+              {/* Credit limit - only for credit card accounts */}
+              {data.type === 'credit_card' && (
+                <Field>
+                  <FieldLabel htmlFor="credit_limit">Credit limit</FieldLabel>
+                  <FieldContent>
+                    <Input
+                      id="credit_limit"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={data.credit_limit}
+                      onChange={(e) => setData('credit_limit', e.target.value)}
+                      placeholder="Enter credit limit"
+                    />
+                    <FieldError
+                      errors={
+                        errors.credit_limit
+                          ? [{ message: errors.credit_limit }]
+                          : undefined
+                      }
+                    />
+                  </FieldContent>
+                </Field>
+              )}
             </FieldGroup>
 
             {/* Submit Button */}

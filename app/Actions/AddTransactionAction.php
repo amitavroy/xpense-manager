@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\AccountTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
@@ -11,8 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class AddTransactionAction
 {
+    public function __construct(
+        private readonly AddCreditCardTransactionAction $addCreditCardTransactionAction
+    ) {}
+
     public function execute(array $data, Category $category, Account $account, User $user): Transaction
     {
+        if ($account->type === AccountTypeEnum::CREDIT_CARD) {
+            return $this->addCreditCardTransactionAction->execute($data, $category, $account, $user);
+        }
+
         $transaction = DB::transaction(function () use ($data, $account, $category, $user) {
             $transaction = Transaction::create([
                 'user_id' => $user->id,

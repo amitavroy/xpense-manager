@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TransactionSourceTypeEnum;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,6 +15,7 @@ test('transaction has fillable attributes', function () {
         'amount',
         'date',
         'description',
+        'type',
     ]);
 });
 
@@ -23,6 +25,7 @@ test('transaction has correct casts', function () {
     expect($transaction->getCasts())->toMatchArray([
         'amount' => 'decimal:2',
         'date' => 'date',
+        'type' => TransactionSourceTypeEnum::class,
     ]);
 });
 

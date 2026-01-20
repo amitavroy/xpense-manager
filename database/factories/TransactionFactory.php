@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TransactionSourceTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\User;
@@ -26,6 +27,7 @@ class TransactionFactory extends Factory
             'amount' => $this->faker->randomFloat(2, 0, 1000),
             'date' => $this->faker->date(),
             'description' => $this->faker->sentence(),
+            'type' => TransactionSourceTypeEnum::NORMAL->value,
         ];
     }
 }

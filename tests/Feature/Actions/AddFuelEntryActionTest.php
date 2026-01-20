@@ -1,7 +1,9 @@
 <?php
 
+use App\Actions\AddCreditCardTransactionAction;
 use App\Actions\AddFuelEntryAction;
 use App\Actions\AddTransactionAction;
+use App\Enums\AccountTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
@@ -12,9 +14,13 @@ use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 beforeEach(function () {
-    $this->action = new AddFuelEntryAction(new AddTransactionAction);
+    $this->action = new AddFuelEntryAction(new AddTransactionAction(new AddCreditCardTransactionAction));
     $this->user = User::factory()->create();
-    $this->account = Account::factory()->create(['user_id' => $this->user->id, 'balance' => 1000.00]);
+    $this->account = Account::factory()->create([
+        'user_id' => $this->user->id,
+        'balance' => 1000.00,
+        'type' => AccountTypeEnum::CASH,
+    ]);
     $this->vehicle = Vehicle::factory()->create(['user_id' => $this->user->id]);
     $this->fuelCategory = Category::factory()->create([
         'name' => 'Fuel',
@@ -298,7 +304,11 @@ test('fuel entry action works with different vehicles', function () {
 });
 
 test('fuel entry action works with different accounts', function () {
-    $account2 = Account::factory()->create(['user_id' => $this->user->id, 'balance' => 5000.00]);
+    $account2 = Account::factory()->create([
+        'user_id' => $this->user->id,
+        'balance' => 5000.00,
+        'type' => AccountTypeEnum::CASH,
+    ]);
 
     $data1 = [
         'vehicle_id' => $this->vehicle->id,

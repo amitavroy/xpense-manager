@@ -2,15 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Enums\AccountTypeEnum;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Biller;
+use App\Enums\TransactionSourceTypeEnum;
+use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
+use App\Models\Biller;
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Enums\AccountTypeEnum;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Enums\TransactionTypeEnum;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -108,6 +109,7 @@ class DatabaseSeeder extends Seeder
                 'amount' => 500,
                 'description' => 'Dinner with friends',
                 'date' => now(),
+                'type' => TransactionSourceTypeEnum::NORMAL->value,
             ],
             [
                 'user_id' => $user->id,
@@ -116,6 +118,7 @@ class DatabaseSeeder extends Seeder
                 'amount' => 250,
                 'description' => 'Lunch with friends',
                 'date' => now(),
+                'type' => TransactionSourceTypeEnum::NORMAL->value,
             ],
             [
                 'user_id' => $user->id,
@@ -124,6 +127,7 @@ class DatabaseSeeder extends Seeder
                 'amount' => 150,
                 'description' => 'Going to office',
                 'date' => now(),
+                'type' => TransactionSourceTypeEnum::NORMAL->value,
             ],
         ])->each(function ($transaction) {
             Transaction::create($transaction);

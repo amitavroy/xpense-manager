@@ -2,6 +2,8 @@
 
 namespace App\Actions;
 
+use App\Enums\AccountTypeEnum;
+use App\Enums\TransactionSourceTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\Transaction;
@@ -25,7 +27,8 @@ class UpdateTransactionAction
             $oldAccount,
             $newCategory,
             $oldCategory,
-            $oldAmount): Transaction {
+            $oldAmount
+        ) {
             $newAmount = $data['amount'];
             $accountChanged = $oldAccount->id !== $newAccount->id;
 
@@ -49,14 +52,21 @@ class UpdateTransactionAction
                     $newCategory,
                 );
             }
+            // Determine type based on account or use provided type
+            $type = $data['type'] ?? ($newAccount->type === AccountTypeEnum::CREDIT_CARD
+                ? TransactionSourceTypeEnum::CREDIT_CARD->value
+                : TransactionSourceTypeEnum::NORMAL->value);
+
             // Update the transaction
-            $transaction->update([
+            $transaction->fill([
                 'account_id' => $newAccount->id,
                 'category_id' => $newCategory->id,
                 'amount' => $data['amount'],
                 'date' => $data['date'],
                 'description' => $data['description'],
+                'type' => $type,
             ]);
+            $transaction->save();
 
             return $transaction;
         });

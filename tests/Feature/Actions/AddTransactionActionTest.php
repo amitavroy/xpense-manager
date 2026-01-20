@@ -1,6 +1,9 @@
 <?php
 
+use App\Actions\AddCreditCardTransactionAction;
 use App\Actions\AddTransactionAction;
+use App\Enums\AccountTypeEnum;
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
@@ -8,9 +11,13 @@ use App\Models\Transaction;
 use App\Models\User;
 
 beforeEach(function () {
-    $this->action = new AddTransactionAction;
+    $this->action = new AddTransactionAction(new AddCreditCardTransactionAction);
     $this->user = User::factory()->create();
-    $this->account = Account::factory()->create(['user_id' => $this->user->id, 'balance' => 1000.00]);
+    $this->account = Account::factory()->create([
+        'user_id' => $this->user->id,
+        'balance' => 1000.00,
+        'type' => AccountTypeEnum::CASH,
+    ]);
 });
 
 test('can execute add transaction action for expense', function () {
@@ -31,7 +38,8 @@ test('can execute add transaction action for expense', function () {
         ->category_id->toBe($expenseCategory->id)
         ->amount->toBe('100.50')
         ->date->format('Y-m-d')->toBe('2024-01-15')
-        ->description->toBe('Grocery shopping');
+        ->description->toBe('Grocery shopping')
+        ->type->toBe(TransactionSourceTypeEnum::NORMAL);
 
     // Verify account balance was decremented
     $this->account->refresh();
@@ -56,7 +64,8 @@ test('can execute add transaction action for income', function () {
         ->category_id->toBe($incomeCategory->id)
         ->amount->toBe('250.75')
         ->date->format('Y-m-d')->toBe('2024-01-20')
-        ->description->toBe('Salary payment');
+        ->description->toBe('Salary payment')
+        ->type->toBe(TransactionSourceTypeEnum::NORMAL);
 
     // Verify account balance was incremented
     $this->account->refresh();
@@ -241,7 +250,11 @@ test('can execute multiple transactions for same account', function () {
 
 test('can execute transactions for different accounts', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
-    $account2 = Account::factory()->create(['user_id' => $this->user->id, 'balance' => 500.00]);
+    $account2 = Account::factory()->create([
+        'user_id' => $this->user->id,
+        'balance' => 500.00,
+        'type' => AccountTypeEnum::CASH,
+    ]);
 
     $data = [
         'amount' => 50.00,
@@ -271,7 +284,11 @@ test('can execute transactions for different accounts', function () {
 test('can execute transactions for different users', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
     $user2 = User::factory()->create();
-    $account2 = Account::factory()->create(['user_id' => $user2->id, 'balance' => 800.00]);
+    $account2 = Account::factory()->create([
+        'user_id' => $user2->id,
+        'balance' => 800.00,
+        'type' => AccountTypeEnum::CASH,
+    ]);
 
     $data = [
         'amount' => 75.00,
@@ -323,7 +340,8 @@ test('transaction is persisted to database after execution', function () {
         ->category_id->toBe($expenseCategory->id)
         ->amount->toBe('200.00')
         ->date->format('Y-m-d')->toBe('2024-01-15')
-        ->description->toBe('Persistent transaction');
+        ->description->toBe('Persistent transaction')
+        ->type->toBe(TransactionSourceTypeEnum::NORMAL);
 });
 
 test('action returns same transaction instance that was created', function () {

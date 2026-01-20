@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\TransactionSourceTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Validation\Rule;
 
 class UpdateTransactionRequest extends FormRequest
 {
@@ -31,6 +33,7 @@ class UpdateTransactionRequest extends FormRequest
             'amount' => ['required', 'numeric', 'min:1'],
             'date' => ['required', 'date'],
             'description' => ['required', 'string', 'max:255'],
+            'type' => ['nullable', Rule::enum(TransactionSourceTypeEnum::class)],
         ];
     }
 

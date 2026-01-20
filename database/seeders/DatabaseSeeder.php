@@ -2,14 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Enums\TransactionTypeEnum;
+use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Account;
 use App\Models\Biller;
+use App\Models\Account;
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Models\User;
+use App\Enums\AccountTypeEnum;
 use Illuminate\Database\Seeder;
+use App\Enums\TransactionTypeEnum;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -47,6 +48,7 @@ class DatabaseSeeder extends Seeder
             Account::factory()->create([
                 'user_id' => $user2->id,
                 'name' => $account,
+                'currency' => 'INR',
             ]);
         });
     }
@@ -55,14 +57,23 @@ class DatabaseSeeder extends Seeder
     {
         collect([
             'HDFC Bank Saving',
-            'ICICI Bank Credit Card',
-            'Axis Bank Credit Card',
+            'ICICI Bank Savings',
+            'Axis Bank Salary',
         ])->each(function ($account) use ($user) {
             Account::factory()->create([
                 'user_id' => $user->id,
                 'name' => $account,
+                'currency' => 'INR',
             ]);
         });
+
+        Account::factory()->create([
+            'user_id' => $user->id,
+            'name' => 'ICICI Bank Credit Card',
+            'currency' => 'INR',
+            'type' => AccountTypeEnum::CREDIT_CARD,
+            'credit_limit' => 100000,
+        ]);
 
         collect([
             'Food',

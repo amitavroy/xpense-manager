@@ -27,6 +27,14 @@ class StoreAccountRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', 'unique:accounts,name'],
             'type' => ['required', Rule::enum(AccountTypeEnum::class)],
             'balance' => ['required', 'numeric', 'min:0'],
+            'credit_limit' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                Rule::requiredIf(
+                    $this->input('type') === AccountTypeEnum::CREDIT_CARD->value
+                ),
+            ],
         ];
     }
 }

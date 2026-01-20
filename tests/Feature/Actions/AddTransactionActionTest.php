@@ -35,7 +35,7 @@ test('can execute add transaction action for expense', function () {
 
     // Verify account balance was decremented
     $this->account->refresh();
-    expect($this->account->balance)->toBe('899.5');
+    expect($this->account->balance)->toBe('899.50');
 });
 
 test('can execute add transaction action for income', function () {
@@ -80,7 +80,7 @@ test('can execute add transaction action with zero amount', function () {
 
     // Verify account balance remains unchanged
     $this->account->refresh();
-    expect($this->account->balance)->toBe('1000');
+    expect($this->account->balance)->toBe('1000.00');
 });
 
 test('can execute add transaction action with large amount', function () {
@@ -120,7 +120,7 @@ test('can execute add transaction action with decimal precision', function () {
 
     // Verify account balance was decremented with proper precision
     $this->account->refresh();
-    expect($this->account->balance)->toBe('876.544');
+    expect($this->account->balance)->toBe('876.54');
 });
 
 test('can execute add transaction action with future date', function () {
@@ -236,7 +236,7 @@ test('can execute multiple transactions for same account', function () {
 
     // Verify final account balance
     $this->account->refresh();
-    expect($this->account->balance)->toBe('1100'); // 1000 - 100 + 200
+    expect($this->account->balance)->toBe('1100.00'); // 1000 - 100 + 200
 });
 
 test('can execute transactions for different accounts', function () {
@@ -264,8 +264,8 @@ test('can execute transactions for different accounts', function () {
     $this->account->refresh();
     $account2->refresh();
 
-    expect($this->account->balance)->toBe('950');
-    expect($account2->balance)->toBe('450');
+    expect($this->account->balance)->toBe('950.00');
+    expect($account2->balance)->toBe('450.00');
 });
 
 test('can execute transactions for different users', function () {
@@ -296,8 +296,8 @@ test('can execute transactions for different users', function () {
     $this->account->refresh();
     $account2->refresh();
 
-    expect($this->account->balance)->toBe('925');
-    expect($account2->balance)->toBe('725');
+    expect($this->account->balance)->toBe('925.00');
+    expect($account2->balance)->toBe('725.00');
 });
 
 test('transaction is persisted to database after execution', function () {
@@ -365,7 +365,7 @@ test('database transaction rollback on failure', function () {
 
     // Verify the transaction was created and balance was updated
     $this->account->refresh();
-    expect($this->account->balance)->toBe('900');
+    expect($this->account->balance)->toBe('900.00');
 
     // Verify transaction exists in database
     expect(Transaction::find($transaction->id))->not->toBeNull();

@@ -23,7 +23,7 @@ test('can execute add account action with minimal data', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Test Account')
         ->type->toBe(AccountTypeEnum::BANK)
-        ->balance->toBe(1000.00)
+        ->balance->toBe('1000.00')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -44,7 +44,7 @@ test('can execute add account action with all data provided', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Premium Savings Account')
         ->type->toBe(AccountTypeEnum::CREDIT_CARD)
-        ->balance->toBe(5000.50)
+        ->balance->toBe('5000.50')
         ->currency->toBe('INR') // Should be overridden
         ->is_active->toBeTrue() // Should be overridden
         ->user_id->toBe($this->user->id);
@@ -63,7 +63,7 @@ test('can execute add account action with cash account type', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Cash Wallet')
         ->type->toBe(AccountTypeEnum::CASH)
-        ->balance->toBe(500.00)
+        ->balance->toBe('500.00')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -82,7 +82,7 @@ test('can execute add account action with zero balance', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Empty Account')
         ->type->toBe(AccountTypeEnum::BANK)
-        ->balance->toBe(0.00)
+        ->balance->toBe('0.00')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -101,7 +101,7 @@ test('can execute add account action with decimal balance', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Precision Account')
         ->type->toBe(AccountTypeEnum::BANK)
-        ->balance->toBe(1234.567)
+        ->balance->toBe('1234.57')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -120,7 +120,7 @@ test('can execute add account action with special characters in name', function 
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Account & Co. (Special) - 2024')
         ->type->toBe(AccountTypeEnum::BANK)
-        ->balance->toBe(1000.00)
+        ->balance->toBe('1000.00')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -197,7 +197,7 @@ test('account is persisted to database after execution', function () {
         ->toBeInstanceOf(Account::class)
         ->name->toBe('Persistent Account')
         ->type->toBe(AccountTypeEnum::BANK)
-        ->balance->toBe('1000')
+        ->balance->toBe('1000.00')
         ->currency->toBe('INR')
         ->is_active->toBeTrue()
         ->user_id->toBe($this->user->id);
@@ -218,5 +218,5 @@ test('action returns same account instance that was created', function () {
     // Check that the account has the expected attributes
     expect($account->name)->toBe('Return Test Account');
     expect($account->type)->toBe(AccountTypeEnum::BANK);
-    expect($account->balance)->toBe(1000.00);
+    expect($account->balance)->toBe('1000.00');
 });

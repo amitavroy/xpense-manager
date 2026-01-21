@@ -49,8 +49,12 @@ class AccountController extends Controller
 
         $account = $addAccountAction->execute($data, Auth::user());
 
-        return redirect()->route('accounts.show', $account)
-            ->with('success', 'Account created successfully');
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Account created successfully!',
+        ]);
+
+        return redirect()->route('accounts.show', $account);
     }
 
     /**
@@ -72,8 +76,12 @@ class AccountController extends Controller
 
         $account->update($data);
 
-        return redirect()->route('accounts.show', $account)
-            ->with('success', 'Account updated successfully');
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Account updated successfully!',
+        ]);
+
+        return redirect()->route('accounts.show', $account);
     }
 
     /**
@@ -85,7 +93,11 @@ class AccountController extends Controller
 
         $account->delete();
 
-        return redirect()->route('accounts.index')
-            ->with('success', 'Account deleted successfully');
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Account deleted successfully!',
+        ]);
+
+        return redirect()->route('accounts.index');
     }
 }

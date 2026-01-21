@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user2->id,
                 'name' => $account,
                 'currency' => 'INR',
+                'type' => AccountTypeEnum::BANK,
             ]);
         });
     }
@@ -65,6 +66,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
                 'name' => $account,
                 'currency' => 'INR',
+                'type' => AccountTypeEnum::BANK,
             ]);
         });
 

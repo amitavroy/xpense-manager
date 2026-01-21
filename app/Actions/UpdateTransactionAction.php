@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateTransactionAction
 {
+    public function __construct(
+        private readonly UpdateCreditCardTransactionAction $updateCreditCardTransactionAction
+    ) {}
+
     public function execute(
         Transaction $transaction,
         array $data,
@@ -20,6 +24,19 @@ class UpdateTransactionAction
         Category $oldCategory,
         float $oldAmount): Transaction
     {
+        // If this is a credit card transaction, delegate to UpdateCreditCardTransactionAction
+        if ($transaction->type === TransactionSourceTypeEnum::CREDIT_CARD) {
+            return $this->updateCreditCardTransactionAction->execute(
+                $transaction,
+                $data,
+                $newAccount,
+                $oldAccount,
+                $newCategory,
+                $oldAmount
+            );
+        }
+
+        // Handle normal transactions with balance updates
         return DB::transaction(function () use (
             $transaction,
             $data,

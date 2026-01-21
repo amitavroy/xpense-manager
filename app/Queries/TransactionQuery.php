@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -10,9 +11,11 @@ use Illuminate\Support\Collection;
 
 class TransactionQuery
 {
-    public function recentTransactions(): Builder
-    {
+    public function recentTransactions(
+        TransactionSourceTypeEnum $type = TransactionSourceTypeEnum::NORMAL
+    ): Builder {
         return Transaction::query()
+            ->where('type', $type)
             ->with([
                 'account',
                 'category',
@@ -45,9 +48,19 @@ class TransactionQuery
             month: Carbon::now()->subMonth()
         );
 
+        $currentMonthTotalCreditCardExpense = $this->getTotalCreditCardExpenseForMonth(
+            month: Carbon::now()
+        );
+
+        $previousMonthTotalCreditCardExpense = $this->getTotalCreditCardExpenseForMonth(
+            month: Carbon::now()->subMonth()
+        );
+
         return collect([
             'currentMonthTotalExpense' => $currentMonthTotalExpense,
             'previousMonthTotalExpense' => $previousMonthTotalExpense,
+            'currentMonthTotalCreditCardExpense' => $currentMonthTotalCreditCardExpense,
+            'previousMonthTotalCreditCardExpense' => $previousMonthTotalCreditCardExpense,
         ]);
     }
 
@@ -56,9 +69,11 @@ class TransactionQuery
         ?array $userIds = null,
         ?string $fromDate = null,
         ?string $toDate = null,
-        ?string $preset = null
+        ?string $preset = null,
+        TransactionSourceTypeEnum $type = TransactionSourceTypeEnum::NORMAL
     ): Builder {
         $query = Transaction::query()
+            ->where('type', $type)
             ->with([
                 'account',
                 'category',
@@ -145,6 +160,21 @@ class TransactionQuery
         $endDate = $monthDate->copy()->endOfMonth();
 
         return Transaction::query()
+            ->normal()
+            ->whereCategoryType(TransactionTypeEnum::EXPENSE)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount') ?? 0.0;
+    }
+
+    private function getTotalCreditCardExpenseForMonth(Carbon|string $month): float
+    {
+        $monthDate = is_string($month) ? Carbon::parse($month) : $month;
+
+        $startDate = $monthDate->copy()->startOfMonth();
+        $endDate = $monthDate->copy()->endOfMonth();
+
+        return Transaction::query()
+            ->creditCard()
             ->whereCategoryType(TransactionTypeEnum::EXPENSE)
             ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount') ?? 0.0;

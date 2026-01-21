@@ -1,3 +1,4 @@
+import CreditCardMonthlyStats from '@/components/credit-card-monthly-stats';
 import ExpenseMonthlyStats from '@/components/expense-monthly-stats';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
@@ -44,7 +45,7 @@ export default function Dashboard({
             <ExpenseMonthlyStats expenseStats={expenseStats} />
           </div>
           <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            <CreditCardMonthlyStats expenseStats={expenseStats} />
           </div>
           <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
             <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />

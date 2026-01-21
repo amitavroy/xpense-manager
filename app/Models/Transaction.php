@@ -52,4 +52,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(BillInstance::class);
     }
+
+    public function scopeNormal($query)
+    {
+        return $query->where('type', TransactionSourceTypeEnum::NORMAL);
+    }
+
+    public function scopeCreditCard($query)
+    {
+        return $query->where('type', TransactionSourceTypeEnum::CREDIT_CARD);
+    }
 }

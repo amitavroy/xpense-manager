@@ -4,6 +4,8 @@ import { LucideIcon } from 'lucide-react';
 export interface ExpenseStats {
   currentMonthTotalExpense: number;
   previousMonthTotalExpense: number;
+  currentMonthTotalCreditCardExpense: number;
+  previousMonthTotalCreditCardExpense: number;
 }
 
 export interface Bill {

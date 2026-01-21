@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\GetPendingBillsAction;
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Queries\TransactionQuery;
@@ -17,7 +18,7 @@ class DashboardController extends Controller
         TransactionQuery $transactionQuery
     ): Response {
         $transactions = $transactionQuery
-            ->recentTransactions()
+            ->recentTransactions(type: TransactionSourceTypeEnum::NORMAL)
             ->whereCategoryType(TransactionTypeEnum::EXPENSE)
             ->paginate(10);
 

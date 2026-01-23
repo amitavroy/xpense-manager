@@ -50,31 +50,57 @@ class StoreTransactionRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $data = $validator->safe()->only(['account_id', 'category_id', 'amount']);
+
             $account = Account::find($data['account_id']);
-
-            // Account should be owned by the user
-            if (! $account || $account->user_id !== Auth::user()->id) {
-                $validator->errors()->add('account_id', 'Account not found');
-            }
-
-            // Category should exist
             $category = Category::find($data['category_id']);
-            if (! $category) {
-                $validator->errors()->add('category_id', 'Category not found');
+
+            // Validate models exist and belong to user
+            $this->validateAccountOwnership($validator, $account);
+            $this->validateCategoryExists($validator, $category);
+
+            // Early return if models are invalid
+            if ($validator->errors()->hasAny(['account_id', 'category_id'])) {
+                return;
             }
 
-            // If the category is an expense and account is not a credit card, the account should have enough balance
-            if ($category->type === TransactionTypeEnum::EXPENSE && $account->type !== AccountTypeEnum::CREDIT_CARD && $account->balance < $data['amount']) {
-                $validator->errors()->add('amount', 'Insufficient balance');
-            }
+            // Validate business rules
+            $this->validateAccountBalance($validator, $account, $category, $data['amount']);
+            $this->validateCreditLimit($validator, $account, $data['amount']);
 
-            // If the account is a credit card, the amount should be less than the credit limit
-            if ($account->type === AccountTypeEnum::CREDIT_CARD && $account->credit_limit < $data['amount']) {
-                $validator->errors()->add('amount', 'Amount exceeds credit limit');
-            }
-
+            // Store models in context for use in controller/action
             Context::add('account', $account);
             Context::add('category', $category);
         });
+    }
+
+    private function validateAccountOwnership($validator, ?Account $account): void
+    {
+        if (! $account || $account->user_id !== Auth::user()->id) {
+            $validator->errors()->add('account_id', 'Account not found');
+        }
+    }
+
+    private function validateCategoryExists($validator, ?Category $category): void
+    {
+        if (! $category) {
+            $validator->errors()->add('category_id', 'Category not found');
+        }
+    }
+
+    private function validateAccountBalance($validator, Account $account, Category $category, float $amount): void
+    {
+        $isExpense = $category->type === TransactionTypeEnum::EXPENSE;
+        $isNotCreditCard = $account->type !== AccountTypeEnum::CREDIT_CARD;
+
+        if ($isExpense && $isNotCreditCard && $account->balance < $amount) {
+            $validator->errors()->add('amount', 'Insufficient balance');
+        }
+    }
+
+    private function validateCreditLimit($validator, Account $account, float $amount): void
+    {
+        if ($account->type === AccountTypeEnum::CREDIT_CARD && $account->credit_limit < $amount) {
+            $validator->errors()->add('amount', 'Amount exceeds credit limit');
+        }
     }
 }

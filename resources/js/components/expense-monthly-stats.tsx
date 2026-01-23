@@ -20,6 +20,9 @@ export default function ExpenseMonthlyStats({
 
   return (
     <div className="flex h-full flex-col items-center justify-center p-6">
+      <div className="mb-4 text-sm font-medium text-muted-foreground">
+        Monthly Expenses
+      </div>
       <div className={`text-4xl font-bold ${textColor}`}>
         {formatCurrency(currentMonthTotalExpense)}
       </div>

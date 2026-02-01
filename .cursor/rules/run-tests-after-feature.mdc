@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+---
+# Run tests after feature completion
+
+After completing any feature or non-trivial change:
+
+1. **Run the relevant tests** – Use `php artisan test` with a filter or filename that covers the changed code (e.g. `php artisan test --filter=TransactionQuery` or `php artisan test tests/Feature/Queries/TransactionQueryTest.php`).
+2. **Confirm nothing is breaking** – Ensure the run finishes with all tests passing before considering the work done.
+3. **If you ran only a subset** – Ask the user if they want to run the full test suite (`php artisan test`) to confirm everything still passes.
+
+Do not mark a feature as complete without having run and passed the related tests.

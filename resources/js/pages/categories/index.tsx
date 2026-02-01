@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import Heading from '../../components/heading';
+import Pagination from '../../components/pagination';
 import { Button } from '../../components/ui/button';
 import AppLayout from '../../layouts/app-layout';
 import { create, index } from '../../routes/categories';
@@ -40,6 +41,7 @@ export default function CategoriesIndexPage({
 
         <div className="flex flex-col gap-4">
           <CategoryTable categories={categories} />
+          <Pagination paginatedData={categories} />
         </div>
       </div>
     </AppLayout>

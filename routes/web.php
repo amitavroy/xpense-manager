@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FuelEntryController;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ReconciliationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripExpenseController;
@@ -24,6 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('accounts', AccountController::class)
         ->except(['edit']);
+
+    Route::post('account/{account}/reconcile', ReconciliationController::class)
+        ->name('account.reconcile');
 
     Route::resource('transactions', TransactionController::class)
         ->except(['edit']);

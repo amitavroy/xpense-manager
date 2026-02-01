@@ -46,8 +46,12 @@ class CategoryController extends Controller
 
         $category = $action->execute($data);
 
-        return redirect()->route('categories.show', $category)
-            ->with('success', 'Category created successfully');
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Category created successfully!',
+        ]);
+
+        return redirect()->route('categories.show', $category);
     }
 
     /**
@@ -69,8 +73,12 @@ class CategoryController extends Controller
 
         $category->update($data);
 
-        return redirect()->route('categories.show', $category)
-            ->with('success', 'Category updated successfully');
+        Inertia::flash('notification', [
+            'type' => 'success',
+            'message' => 'Category updated successfully!',
+        ]);
+
+        return redirect()->route('categories.show', $category);
     }
 
     /**

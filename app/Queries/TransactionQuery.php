@@ -113,7 +113,7 @@ class TransactionQuery
             ],
             'this_month' => [
                 $now->copy()->startOfMonth()->format('Y-m-d'),
-                $now->copy()->endOfDay()->format('Y-m-d'),
+                $now->copy()->endOfMonth()->format('Y-m-d'),
             ],
             'last_month' => [
                 $now->copy()->subMonth()->startOfMonth()->format('Y-m-d'),

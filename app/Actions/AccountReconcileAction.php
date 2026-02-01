@@ -37,7 +37,7 @@ class AccountReconcileAction
                     $isIncome ? '+' : '-',
                     $amount
                 ),
-                'type' => TransactionSourceTypeEnum::NORMAL->value,
+                'type' => TransactionSourceTypeEnum::RECONCILIATION->value,
             ]);
 
             if ($isIncome) {

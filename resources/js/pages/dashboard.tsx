@@ -1,8 +1,13 @@
 import CreditCardMonthlyStats from '@/components/credit-card-monthly-stats';
 import ExpenseMonthlyStats from '@/components/expense-monthly-stats';
+import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
+import { create as createFuelEntry } from '@/routes/fuel-entry';
+import { create as createTransaction } from '@/routes/transactions';
+import { index as indexVehicles } from '@/routes/vehicles';
 import {
   Account,
   BillInstance,
@@ -11,7 +16,7 @@ import {
   Transaction,
   type BreadcrumbItem,
 } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import AccountsTable from '../tables/accounts-table';
 import BillInstanceTable from '../tables/bill-instance-table';
 import TransactionsTable from '../tables/transactions-table';
@@ -53,6 +58,20 @@ export default function Dashboard({
           <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
             <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
           </div>
+        </div>
+
+        <div className="grid auto-rows-min gap-4 md:grid-cols-4">
+          <ButtonGroup aria-label="Quick actions">
+            <Button variant="outline" asChild>
+              <Link href={createTransaction().url}>Add expense</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href={createFuelEntry().url}>Add fuel entry</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href={indexVehicles().url}>Vehicles</Link>
+            </Button>
+          </ButtonGroup>
         </div>
 
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">

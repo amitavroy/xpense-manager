@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
+import { getVehicleKilometers } from '../lib/utils';
 import { store } from '../routes/fuel-entry/index';
 import { AccountDropdown, FuelEntry, VehicleDropdown } from '../types';
 
@@ -42,13 +43,19 @@ export default function FuelEntryForm({
         ? fuelEntry.vehicle_id.toString()
         : '';
 
+  const initialOdometerReading =
+    fuelEntry.odometer_reading !== undefined &&
+    fuelEntry.odometer_reading !== null
+      ? fuelEntry.odometer_reading.toString()
+      : getVehicleKilometers(vehicles, initialVehicleId);
+
   const { data, setData, post, processing, errors, reset } = useForm({
     vehicle_id: initialVehicleId,
     account_id: fuelEntry.account_id ? fuelEntry.account_id.toString() : '',
     date: fuelEntry.date
       ? new Date(fuelEntry.date).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
-    odometer_reading: fuelEntry.odometer_reading || '',
+    odometer_reading: initialOdometerReading,
     fuel_quantity: fuelEntry.fuel_quantity || '',
     amount: fuelEntry.amount || '',
     petrol_station_name: fuelEntry.petrol_station_name || '',
@@ -79,7 +86,15 @@ export default function FuelEntryForm({
                 <FieldContent>
                   <Select
                     value={data.vehicle_id}
-                    onValueChange={(value) => setData('vehicle_id', value)}
+                    onValueChange={(value) => {
+                      setData('vehicle_id', value);
+
+                      const kilometers = getVehicleKilometers(vehicles, value);
+
+                      if (kilometers !== '') {
+                        setData('odometer_reading', kilometers);
+                      }
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a vehicle" />

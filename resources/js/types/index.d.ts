@@ -228,6 +228,7 @@ export interface Vehicle {
 export interface VehicleDropdown {
   id: number;
   name: string;
+  kilometers?: number;
 }
 
 export interface FuelEntry {

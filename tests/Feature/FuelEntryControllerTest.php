@@ -19,3 +19,22 @@ test('authenticated users can see fuel entry form with preselected vehicle when 
             ->has('accounts')
     );
 });
+
+test('fuel entry create page exposes vehicle kilometers for dropdown vehicles', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $vehicle = Vehicle::factory()->create([
+        'user_id' => $user->id,
+        'kilometers' => 12345,
+    ]);
+
+    $response = $this->get(route('fuel-entry.create', ['vehicle_id' => $vehicle->id]));
+
+    $response->assertOk();
+    $response->assertInertia(
+        fn ($page) => $page
+            ->where('fuelEntry.vehicle_id', $vehicle->id)
+            ->where('vehicles.0.kilometers', $vehicle->kilometers)
+    );
+});

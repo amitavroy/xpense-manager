@@ -27,7 +27,16 @@ class FuelEntryController extends Controller
     public function create(): Response
     {
         $fuelEntry = new FuelEntry;
-        $vehicles = $this->vehicleQuery->forUser()->get(['id', 'name']);
+        $vehicles = $this->vehicleQuery
+            ->forUser()
+            ->get(['id', 'name', 'kilometers'])
+            ->map(function ($vehicle) {
+                return [
+                    'id' => $vehicle->id,
+                    'name' => $vehicle->name,
+                    'kilometers' => $vehicle->kilometers,
+                ];
+            });
         $accounts = $this->dropdownService->getAccounts(Auth::user());
 
         $vehicleId = request()->integer('vehicle_id');

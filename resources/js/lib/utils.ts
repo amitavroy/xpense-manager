@@ -30,3 +30,26 @@ export function formatCurrency(amount: number | string): string {
 
   return currencyFormatter.format(numbericAcmount);
 }
+
+export function getVehicleKilometers(
+  vehicles: { id: number; kilometers?: number }[],
+  vehicleIdValue: string,
+): string {
+  if (!vehicleIdValue) {
+    return '';
+  }
+
+  const id = Number.parseInt(vehicleIdValue, 10);
+
+  if (Number.isNaN(id)) {
+    return '';
+  }
+
+  const vehicle = vehicles.find((item) => item.id === id);
+
+  if (!vehicle || typeof vehicle.kilometers !== 'number') {
+    return '';
+  }
+
+  return vehicle.kilometers.toString();
+}

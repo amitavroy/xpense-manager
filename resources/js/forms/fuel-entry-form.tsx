@@ -26,15 +26,24 @@ interface FuelEntryFormProps {
   fuelEntry: FuelEntry;
   vehicles: VehicleDropdown[];
   accounts: AccountDropdown[];
+  vehicleId?: number;
 }
 
 export default function FuelEntryForm({
   fuelEntry,
   vehicles,
   accounts,
+  vehicleId,
 }: FuelEntryFormProps) {
+  const initialVehicleId =
+    vehicleId !== undefined && vehicleId !== null
+      ? vehicleId.toString()
+      : fuelEntry.vehicle_id
+        ? fuelEntry.vehicle_id.toString()
+        : '';
+
   const { data, setData, post, processing, errors, reset } = useForm({
-    vehicle_id: fuelEntry.vehicle_id ? fuelEntry.vehicle_id.toString() : '',
+    vehicle_id: initialVehicleId,
     account_id: fuelEntry.account_id ? fuelEntry.account_id.toString() : '',
     date: fuelEntry.date
       ? new Date(fuelEntry.date).toISOString().split('T')[0]

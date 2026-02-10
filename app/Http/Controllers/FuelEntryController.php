@@ -30,10 +30,24 @@ class FuelEntryController extends Controller
         $vehicles = $this->vehicleQuery->forUser()->get(['id', 'name']);
         $accounts = $this->dropdownService->getAccounts(Auth::user());
 
+        $vehicleId = request()->integer('vehicle_id');
+
+        if ($vehicleId !== 0) {
+            $vehicle = $this->vehicleQuery
+                ->forUser()
+                ->where('id', $vehicleId)
+                ->first();
+
+            if ($vehicle !== null) {
+                $fuelEntry->vehicle_id = $vehicle->id;
+            }
+        }
+
         return Inertia::render('fuel-entry/create', [
             'fuelEntry' => $fuelEntry,
             'vehicles' => $vehicles,
             'accounts' => $accounts,
+            'vehicleId' => $fuelEntry->vehicle_id,
         ]);
     }
 

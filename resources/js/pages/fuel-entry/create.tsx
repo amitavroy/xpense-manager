@@ -21,12 +21,14 @@ interface FuelEntryCreateProps {
   fuelEntry: FuelEntry;
   vehicles: VehicleDropdown[];
   accounts: AccountDropdown[];
+  vehicleId?: number | null;
 }
 
 export default function FuelEntryCreatePage({
   fuelEntry,
   vehicles,
   accounts,
+  vehicleId,
 }: FuelEntryCreateProps) {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -45,6 +47,7 @@ export default function FuelEntryCreatePage({
                 fuelEntry={fuelEntry}
                 vehicles={vehicles}
                 accounts={accounts}
+                vehicleId={vehicleId ?? undefined}
               />
             </div>
           </div>

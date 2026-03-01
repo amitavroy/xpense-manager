@@ -10,11 +10,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "inertiajs/inertia-laravel": "^2.0.20",
-        "laravel/fortify": "^1.34.1",
-        "laravel/framework": "^12.52.0",
+        "inertiajs/inertia-laravel": "^2.0.21",
+        "laravel/fortify": "^1.35.0",
+        "laravel/framework": "^12.53.0",
         "laravel/tinker": "^2.11.1",
-        "laravel/wayfinder": "^0.1.13"
+        "laravel/wayfinder": "^0.1.14"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",

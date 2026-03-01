@@ -15,6 +15,17 @@ export interface MonthlyExpenseRow {
   credit_card: number;
 }
 
+export interface MonthlyExpenseByCategoryCategoryRow {
+  category_id: number;
+  category_name: string;
+  total: number;
+}
+
+export interface MonthlyExpenseByCategoryRow {
+  month: string;
+  categories: MonthlyExpenseByCategoryCategoryRow[];
+}
+
 export interface Bill {
   id: number;
   user_id: number;

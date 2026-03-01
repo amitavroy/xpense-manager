@@ -22,5 +22,8 @@ test('authenticated user can view monthly expenses report', function () {
             ->has('monthlyExpenses.0.total')
             ->has('monthlyExpenses.0.normal')
             ->has('monthlyExpenses.0.credit_card')
+            ->has('monthlyExpensesByCategory', 3)
+            ->has('monthlyExpensesByCategory.0.month')
+            ->has('monthlyExpensesByCategory.0.categories')
         );
 });

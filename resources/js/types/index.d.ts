@@ -8,6 +8,13 @@ export interface ExpenseStats {
   previousMonthTotalCreditCardExpense: number;
 }
 
+export interface MonthlyExpenseRow {
+  month: string;
+  total: number;
+  normal: number;
+  credit_card: number;
+}
+
 export interface Bill {
   id: number;
   user_id: number;

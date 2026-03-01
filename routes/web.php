@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FuelEntryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ReconciliationController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripExpenseController;
@@ -22,6 +23,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('reports/monthly-expenses', [ReportController::class, 'monthlyExpenses'])
+        ->name('reports.monthly-expenses');
 
     Route::resource('accounts', AccountController::class)
         ->except(['edit']);

@@ -31,6 +31,16 @@ export function formatCurrency(amount: number | string): string {
   return currencyFormatter.format(numbericAcmount);
 }
 
+/** Short form for chart axes to avoid overflow (e.g. "₹10k", "₹1L"). */
+export function formatCurrencyShort(amount: number): string {
+  if (!Number.isFinite(amount)) return '₹0';
+  const abs = Math.abs(amount);
+  if (abs >= 1_00_00_000) return `₹${(amount / 1_00_00_000).toFixed(1)}Cr`;
+  if (abs >= 1_00_000) return `₹${(amount / 1_00_000).toFixed(1)}L`;
+  if (abs >= 1_000) return `₹${(amount / 1_000).toFixed(1)}k`;
+  return currencyFormatter.format(amount);
+}
+
 export function getVehicleKilometers(
   vehicles: { id: number; kilometers?: number }[],
   vehicleIdValue: string,

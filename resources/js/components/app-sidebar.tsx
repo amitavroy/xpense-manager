@@ -22,6 +22,7 @@ import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
   Banknote,
+  BarChart3,
   Bike,
   BookOpen,
   Building,
@@ -78,6 +79,12 @@ const mainNavItems: NavItem[] = [
     title: 'Vehicles',
     href: indexVehicles().url,
     icon: Bike,
+    prefetch: true,
+  },
+  {
+    title: 'Monthly expenses',
+    href: '/reports/monthly-expenses',
+    icon: BarChart3,
     prefetch: true,
   },
 ];

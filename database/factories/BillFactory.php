@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\BillFrequencyEnum;
+use App\Models\Biller;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,14 @@ class BillFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'biller_id' => Biller::factory(),
+            'default_amount' => $this->faker->randomFloat(2, 100, 5000),
+            'frequency' => BillFrequencyEnum::MONTHLY->value,
+            'interval_days' => null,
+            'next_payment_date' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'is_active' => true,
+            'auto_generate_bill' => true,
         ];
     }
 }

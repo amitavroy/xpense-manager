@@ -1,9 +1,11 @@
+import BillerExpenseReport from '@/components/biller-expense-report';
 import MonthlyExpenseByCategoryChart from '@/components/monthly-expense-by-category-chart';
 import MonthlyExpenseChart from '@/components/monthly-expense-chart';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type {
+  BillerExpenseDataPoint,
   BreadcrumbItem,
   MonthlyExpenseByCategoryRow,
   MonthlyExpenseRow,
@@ -25,14 +27,54 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface MonthlyExpensesProps {
   monthlyExpenses: MonthlyExpenseRow[];
   monthlyExpensesByCategory: MonthlyExpenseByCategoryRow[];
+  billers: { id: number; name: string }[];
+  billerExpenseData: BillerExpenseDataPoint[];
+  billerExpenseBillers: { id: number; name: string }[];
+  selectedBillerIds: number[];
+  billerMonths: number;
 }
 
 export default function MonthlyExpenses({
   monthlyExpenses,
   monthlyExpensesByCategory,
+  billers,
+  billerExpenseData,
+  billerExpenseBillers,
+  selectedBillerIds,
+  billerMonths,
 }: MonthlyExpensesProps) {
   const refreshData = () => {
     router.visit('/reports/monthly-expenses?cacheClear=true');
+  };
+
+  const visitBillerReport = (
+    billerMonthsValue: number,
+    billerIds: number[],
+  ) => {
+    const search = new URLSearchParams();
+    search.set('biller_months', String(billerMonthsValue));
+    billerIds.forEach((id) => search.append('biller_ids[]', String(id)));
+    const url =
+      '/reports/monthly-expenses' +
+      (search.toString() ? `?${search.toString()}` : '');
+    router.visit(url, {
+      preserveScroll: true,
+      preserveState: false,
+    });
+  };
+
+  const handleMonthsChange = (months: number) => {
+    visitBillerReport(months, selectedBillerIds ?? []);
+  };
+
+  const handleBillerToggle = (id: number) => {
+    const current = new Set(selectedBillerIds ?? []);
+    if (current.has(id)) {
+      current.delete(id);
+    } else {
+      current.add(id);
+    }
+    visitBillerReport(billerMonths ?? 3, Array.from(current));
   };
 
   return (
@@ -54,6 +96,18 @@ export default function MonthlyExpenses({
               monthlyExpensesByCategory={monthlyExpensesByCategory}
             />
           </div>
+        </div>
+        <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+          <BillerExpenseReport
+            billers={billers}
+            billerExpenseData={billerExpenseData}
+            billerExpenseBillers={billerExpenseBillers}
+            selectedBillerIds={selectedBillerIds}
+            billerMonths={billerMonths}
+            onMonthsChange={handleMonthsChange}
+            onBillerToggle={handleBillerToggle}
+          />
+          <div className="relative min-w-0" />
         </div>
       </div>
     </AppLayout>

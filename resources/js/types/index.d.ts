@@ -83,6 +83,12 @@ export interface BillInstance {
 
 export type BillStatus = 'pending' | 'paid' | 'skipped' | 'cancelled';
 
+export interface BillerExpenseDataPoint {
+  month: string;
+  // Additional keys like `biller_4`, `biller_5`, etc. will be added dynamically.
+  [key: string]: number | string;
+}
+
 export interface Category {
   id: number;
   name: string;

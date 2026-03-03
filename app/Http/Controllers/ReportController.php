@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Reports\BillerExpenseGraphAction;
 use App\Queries\Reports\MonthlyExpenseByCategoryQuery;
 use App\Queries\Reports\MonthlyExpenseQuery;
 use Carbon\Carbon;
@@ -18,7 +19,8 @@ class ReportController extends Controller
     public function monthlyExpenses(
         Request $request,
         MonthlyExpenseQuery $monthlyExpenseQuery,
-        MonthlyExpenseByCategoryQuery $monthlyExpenseByCategoryQuery
+        MonthlyExpenseByCategoryQuery $monthlyExpenseByCategoryQuery,
+        BillerExpenseGraphAction $billerExpenseGraphAction
     ): Response {
         $cacheKey = 'reports.monthly-expenses.'.Auth::id();
 
@@ -52,9 +54,16 @@ class ReportController extends Controller
         $monthlyExpenses = array_is_list($data) ? $data[0] : $data['monthlyExpenses'];
         $monthlyExpensesByCategory = array_is_list($data) ? $data[1] : $data['monthlyExpensesByCategory'];
 
+        $billerGraph = $billerExpenseGraphAction->execute($request, Auth::id());
+
         return Inertia::render('reports/monthly-expenses', [
             'monthlyExpenses' => $monthlyExpenses,
             'monthlyExpensesByCategory' => $monthlyExpensesByCategory,
+            'billers' => $billerGraph['billers'],
+            'billerExpenseData' => $billerGraph['billerExpenseData'],
+            'billerExpenseBillers' => $billerGraph['billerExpenseBillers'],
+            'selectedBillerIds' => $billerGraph['selectedBillerIds'],
+            'billerMonths' => $billerGraph['billerMonths'],
         ]);
     }
 }

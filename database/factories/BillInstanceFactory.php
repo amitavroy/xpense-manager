@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\BillStatusEnum;
+use App\Models\Bill;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,13 @@ class BillInstanceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'bill_id' => Bill::factory(),
+            'transaction_id' => null,
+            'due_date' => $this->faker->date(),
+            'amount' => $this->faker->randomFloat(2, 100, 5000),
+            'status' => BillStatusEnum::PENDING->value,
+            'paid_date' => null,
+            'notes' => null,
         ];
     }
 }

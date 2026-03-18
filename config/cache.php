@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache Serialization Security
+    |--------------------------------------------------------------------------
+    |
+    | Laravel 13 hardens cache unserialization by allowing you to explicitly
+    | define which classes may be unserialized. Set to false to disallow
+    | unserializing arbitrary classes from the cache.
+    |
+    */
+
+    'serializable_classes' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Stores
     |--------------------------------------------------------------------------
     |

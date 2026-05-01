@@ -99,8 +99,9 @@ class TransactionQuery
             $query->where('user_id', $userId);
         }
 
-        // Handle preset logic (preset overrides from_date/to_date)
-        if ($preset !== null) {
+        // Handle preset logic (preset overrides from_date/to_date).
+        // Treat null and empty string as "no preset" (request()->string() / edge callers).
+        if ($preset !== null && $preset !== '') {
             [$fromDate, $toDate] = $this->getPresetDates($preset);
         }
 
@@ -143,6 +144,9 @@ class TransactionQuery
     {
         $now = now();
 
+        $fromDate = $fromDate !== null && $fromDate !== '' ? $fromDate : null;
+        $toDate = $toDate !== null && $toDate !== '' ? $toDate : null;
+
         // Default to current month if no dates provided
         if ($fromDate === null && $toDate === null) {
             return [
@@ -151,8 +155,10 @@ class TransactionQuery
             ];
         }
 
-        // Parse dates
-        $from = $fromDate !== null ? Carbon::parse($fromDate)->startOfDay() : $now->copy()->startOfMonth();
+        // Parse dates (missing bound uses start/end of current month)
+        $from = $fromDate !== null
+            ? Carbon::parse($fromDate)->startOfDay()
+            : $now->copy()->startOfMonth();
         $to = $toDate !== null ? Carbon::parse($toDate)->endOfDay() : $now->copy()->endOfMonth();
 
         return [

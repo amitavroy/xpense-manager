@@ -1070,6 +1070,35 @@ test('expenses preset last_week filters correctly', function () {
     expect($expenses->first()->date->format('Y-m-d'))->toBe($now->copy()->subDays(3)->format('Y-m-d'));
 });
 
+test('expenses ignores empty preset string so manual dates apply', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-01-15',
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2024-02-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(
+        fromDate: '2024-01-10',
+        toDate: '2024-01-20',
+        preset: ''
+    )->get();
+
+    expect($expenses)->toHaveCount(1);
+});
+
 test('expenses preset overrides manual dates', function () {
     $user = User::factory()->create();
     $account = Account::factory()->create(['user_id' => $user->id]);

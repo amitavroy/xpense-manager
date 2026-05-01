@@ -29,14 +29,16 @@ class TransactionController extends Controller
     {
         $userId = request()->integer('user_id', 0) ?: null;
         $userIdsParam = request()->get('user_ids');
-        $fromDate = request()->string('from_date', '');
-        $toDate = request()->string('to_date', '');
-        $preset = request()->string('preset', '');
 
-        // Normalize empty strings to null
-        $fromDate = $fromDate === '' ? null : $fromDate;
-        $toDate = $toDate === '' ? null : $toDate;
-        $preset = $preset === '' ? null : $preset;
+        $fromDate = request()->filled('from_date')
+            ? (string) request()->input('from_date')
+            : null;
+        $toDate = request()->filled('to_date')
+            ? (string) request()->input('to_date')
+            : null;
+        $preset = request()->filled('preset')
+            ? (string) request()->input('preset')
+            : null;
 
         // Convert user_ids array to integers and filter out empty values
         // Handle both array format and single value

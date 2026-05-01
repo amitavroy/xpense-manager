@@ -71,7 +71,7 @@ export default function ExpenseFiltersComponent({
                 type="date"
                 value={filters.from_date || ''}
                 onChange={(e) => handleDateChange('from_date', e.target.value)}
-                disabled={isLoading || filters.preset !== null}
+                disabled={isLoading || filters.preset != null}
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -83,7 +83,7 @@ export default function ExpenseFiltersComponent({
                 type="date"
                 value={filters.to_date || ''}
                 onChange={(e) => handleDateChange('to_date', e.target.value)}
-                disabled={isLoading || filters.preset !== null}
+                disabled={isLoading || filters.preset != null}
               />
             </div>
             {users.length > 0 && (

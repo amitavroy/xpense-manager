@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\AddTransactionAction;
 use App\Actions\UpdateTransactionAction;
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
@@ -52,7 +53,11 @@ class TransactionController extends Controller
                 userIds: $userIds,
                 fromDate: $fromDate,
                 toDate: $toDate,
-                preset: $preset
+                preset: $preset,
+                type: [
+                    TransactionSourceTypeEnum::NORMAL,
+                    TransactionSourceTypeEnum::CREDIT_CARD,
+                ],
             )
             ->paginate(10)
             ->withQueryString();

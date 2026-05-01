@@ -20,6 +20,17 @@ const currencyFormatter = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 2,
 });
 
+/** e.g. `credit_card` → "Credit card", `normal` → "Normal". */
+export function humanizeSnakeCase(value: string): string {
+  return value
+    .split('_')
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    )
+    .join(' ');
+}
+
 export function formatCurrency(amount: number | string): string {
   const numbericAcmount =
     typeof amount === 'string' ? parseFloat(amount) : amount;

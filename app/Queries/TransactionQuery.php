@@ -64,16 +64,25 @@ class TransactionQuery
         ]);
     }
 
+    /**
+     * @param  TransactionSourceTypeEnum|array<int, TransactionSourceTypeEnum>  $type
+     */
     public function expenses(
         ?int $userId = null,
         ?array $userIds = null,
         ?string $fromDate = null,
         ?string $toDate = null,
         ?string $preset = null,
-        TransactionSourceTypeEnum $type = TransactionSourceTypeEnum::NORMAL
+        TransactionSourceTypeEnum|array $type = TransactionSourceTypeEnum::NORMAL
     ): Builder {
+        $types = is_array($type) ? $type : [$type];
+        $typeValues = array_map(
+            fn (TransactionSourceTypeEnum $type): string => $type->value,
+            $types
+        );
+
         $query = Transaction::query()
-            ->where('type', $type)
+            ->whereIn('type', $typeValues, 'and', false)
             ->with([
                 'account',
                 'category',
@@ -104,7 +113,7 @@ class TransactionQuery
 
     private function getPresetDates(string $preset): array
     {
-        $now = Carbon::now();
+        $now = now();
 
         return match ($preset) {
             'last_30_days' => [
@@ -132,7 +141,7 @@ class TransactionQuery
 
     private function getDateRange(?string $fromDate, ?string $toDate): array
     {
-        $now = Carbon::now();
+        $now = now();
 
         // Default to current month if no dates provided
         if ($fromDate === null && $toDate === null) {

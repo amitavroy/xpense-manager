@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table';
-import { formatCurrency, formatDate } from '../lib/utils';
+import { formatCurrency, formatDate, humanizeSnakeCase } from '../lib/utils';
 import { show as showIncome } from '../routes/incomes';
 import { show as showTransaction } from '../routes/transactions';
 import { PaginateData, Transaction, TransactionType } from '../types';
@@ -40,6 +40,7 @@ export default function TransactionsTable({
             <TableHead>Date</TableHead>
             <TableHead>User</TableHead>
             <TableHead>Description</TableHead>
+            <TableHead>Source</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Account</TableHead>
             <TableHead className="text-right">Amount</TableHead>
@@ -56,6 +57,7 @@ export default function TransactionsTable({
               <TableCell>{formatDate(transaction.date)}</TableCell>
               <TableCell>{transaction.user?.name}</TableCell>
               <TableCell>{transaction.description}</TableCell>
+              <TableCell>{humanizeSnakeCase(transaction.type)}</TableCell>
               <TableCell>{transaction.category?.name}</TableCell>
               <TableCell>{transaction.account?.name}</TableCell>
               <TableCell className="text-right">

@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\AccountTypeEnum;
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
@@ -228,6 +230,35 @@ test('transactions index filters by preset', function () {
             ->has('transactions.data', 1)
             ->where('filters.preset', 'last_30_days')
     );
+});
+
+test('transactions index includes credit card expense transactions', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $creditAccount = Account::factory()->create([
+        'user_id' => $user->id,
+        'type' => AccountTypeEnum::CREDIT_CARD,
+    ]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    $now = Carbon::now();
+
+    $creditTransaction = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $creditAccount->id,
+        'category_id' => $expenseCategory->id,
+        'type' => TransactionSourceTypeEnum::CREDIT_CARD,
+        'date' => $now->copy()->subDays(5)->format('Y-m-d'),
+    ]);
+
+    $response = $this->get(route('transactions.index', ['preset' => 'last_30_days']));
+    $response->assertOk();
+
+    $transactions = $response->viewData('page')['props']['transactions']['data'];
+    $transactionIds = collect($transactions)->pluck('id')->toArray();
+
+    expect($transactionIds)->toContain($creditTransaction->id);
 });
 
 test('transactions index filters by user_id', function () {

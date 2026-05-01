@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TransactionSourceTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use App\Models\Account;
 use App\Models\Category;
@@ -679,6 +680,58 @@ test('expenses filters by expense type only', function () {
     expect($expenses->first()->category->type)->toBe(TransactionTypeEnum::EXPENSE);
 });
 
+test('expenses accepts multiple source types', function () {
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+    $incomeCategory = Category::factory()->create(['type' => TransactionTypeEnum::INCOME]);
+
+    $currentMonth = Carbon::now();
+
+    $normalExpense = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'type' => TransactionSourceTypeEnum::NORMAL,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $creditCardExpense = Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'type' => TransactionSourceTypeEnum::CREDIT_CARD,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'type' => TransactionSourceTypeEnum::RECONCILIATION,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $incomeCategory->id,
+        'type' => TransactionSourceTypeEnum::NORMAL,
+        'date' => $currentMonth->copy()->day(15)->format('Y-m-d'),
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(type: [
+        TransactionSourceTypeEnum::NORMAL,
+        TransactionSourceTypeEnum::CREDIT_CARD,
+    ])->get();
+
+    expect($expenses->pluck('id')->all())->toEqualCanonicalizing([
+        $normalExpense->id,
+        $creditCardExpense->id,
+    ]);
+});
+
 test('expenses filters by user_id when provided', function () {
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
@@ -876,6 +929,59 @@ test('expenses preset last_30_days filters correctly', function () {
 
     expect($expenses)->toHaveCount(1);
     expect($expenses->first()->date->format('Y-m-d'))->toBe($now->copy()->subDays(15)->format('Y-m-d'));
+});
+
+test('expenses preset last_30_days includes transactions dated today in app timezone', function () {
+    $this->travelTo(Carbon::parse('2026-05-15 12:00:00'));
+
+    $user = User::factory()->create();
+    $account = Account::factory()->create(['user_id' => $user->id]);
+    $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+    Transaction::factory()->create([
+        'user_id' => $user->id,
+        'account_id' => $account->id,
+        'category_id' => $expenseCategory->id,
+        'date' => '2026-05-15',
+    ]);
+
+    $query = new TransactionQuery;
+    $expenses = $query->expenses(preset: 'last_30_days')->get();
+
+    expect($expenses)->toHaveCount(1);
+    expect($expenses->first()->date->format('Y-m-d'))->toBe('2026-05-15');
+
+    $this->travelBack();
+});
+
+test('expenses preset last_30_days end date follows app timezone not only UTC', function () {
+    $previousTz = config('app.timezone');
+    $previousDefault = date_default_timezone_get();
+
+    try {
+        config(['app.timezone' => 'Asia/Kolkata']);
+        date_default_timezone_set('Asia/Kolkata');
+
+        $this->travelTo(Carbon::parse('2026-05-02 01:30:00', 'Asia/Kolkata'));
+
+        $user = User::factory()->create();
+        $account = Account::factory()->create(['user_id' => $user->id]);
+        $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
+
+        Transaction::factory()->create([
+            'user_id' => $user->id,
+            'account_id' => $account->id,
+            'category_id' => $expenseCategory->id,
+            'date' => '2026-05-02',
+        ]);
+
+        $query = new TransactionQuery;
+        expect($query->expenses(preset: 'last_30_days')->get())->toHaveCount(1);
+    } finally {
+        config(['app.timezone' => $previousTz]);
+        date_default_timezone_set($previousDefault);
+        $this->travelBack();
+    }
 });
 
 test('expenses preset this_month filters correctly', function () {

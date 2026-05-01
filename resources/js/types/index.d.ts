@@ -101,6 +101,11 @@ export type AccountType = 'bank' | 'cash' | 'credit_card';
 export type CategoryType = 'income' | 'expense';
 export type TransactionType = 'income' | 'expense';
 
+export type TransactionSourceType =
+  | 'normal'
+  | 'credit_card'
+  | 'reconciliation';
+
 export interface Account {
   id: number;
   name: string;
@@ -120,6 +125,7 @@ export interface Transaction {
   amount: number;
   date: string;
   description: string;
+  type: TransactionSourceType;
   account?: Account;
   category?: Category;
   user?: User;

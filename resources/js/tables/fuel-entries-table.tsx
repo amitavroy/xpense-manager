@@ -32,6 +32,8 @@ export default function FuelEntriesTable({
             <TableHead>Date</TableHead>
             <TableHead>Odometer Reading</TableHead>
             <TableHead>Fuel Quantity (L)</TableHead>
+            <TableHead>Distance (km)</TableHead>
+            <TableHead>Avg (km/L)</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Petrol Station</TableHead>
             <TableHead>Account</TableHead>
@@ -72,6 +74,16 @@ export default function FuelEntriesTable({
                 </TableCell>
                 <TableCell>
                   {fuelQuantity != null ? fuelQuantity.toFixed(2) : '-'}
+                </TableCell>
+                <TableCell>
+                  {entry.dist_since_last_refuel != null
+                    ? Number(entry.dist_since_last_refuel).toLocaleString()
+                    : '-'}
+                </TableCell>
+                <TableCell>
+                  {entry.avg_kmpl != null
+                    ? Number(entry.avg_kmpl).toFixed(2)
+                    : '-'}
                 </TableCell>
                 <TableCell>
                   {amount != null ? formatCurrency(amount) : '-'}

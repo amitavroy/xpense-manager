@@ -344,6 +344,116 @@ test('fuel entry action works with different accounts', function () {
     expect($account2->balance)->toBe(number_format(5000 - 3000, 2, '.', ''));
 });
 
+test('dist_since_last_refuel is null when no previous fuel entry exists', function () {
+    $data = [
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'date' => '2024-01-15',
+        'odometer_reading' => 50000,
+        'fuel_quantity' => 45.50,
+        'amount' => 3500.00,
+        'petrol_station_name' => 'Shell Station',
+    ];
+
+    $fuelEntry = $this->action->execute($data, $this->user);
+
+    expect($fuelEntry->dist_since_last_refuel)->toBeNull();
+});
+
+test('avg_kmpl is null when no previous fuel entry exists', function () {
+    $data = [
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'date' => '2024-01-15',
+        'odometer_reading' => 50000,
+        'fuel_quantity' => 45.50,
+        'amount' => 3500.00,
+        'petrol_station_name' => 'Shell Station',
+    ];
+
+    $fuelEntry = $this->action->execute($data, $this->user);
+
+    expect($fuelEntry->avg_kmpl)->toBeNull();
+});
+
+test('dist_since_last_refuel is persisted when a previous entry exists', function () {
+    FuelEntry::factory()->create([
+        'user_id' => $this->user->id,
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'odometer_reading' => 49000,
+        'fuel_quantity' => 40.00,
+        'amount' => 3000.00,
+    ]);
+
+    $fuelEntry = $this->action->execute([
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'date' => '2024-01-20',
+        'odometer_reading' => 50000,
+        'fuel_quantity' => 50.00,
+        'amount' => 3500.00,
+        'petrol_station_name' => 'Shell Station',
+    ], $this->user);
+
+    expect($fuelEntry->dist_since_last_refuel)->toBe('1000.00');
+
+    $retrieved = FuelEntry::find($fuelEntry->id);
+    expect($retrieved->dist_since_last_refuel)->toBe('1000.00');
+});
+
+test('avg_kmpl is persisted when a previous entry exists', function () {
+    FuelEntry::factory()->create([
+        'user_id' => $this->user->id,
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'odometer_reading' => 49000,
+        'fuel_quantity' => 40.00,
+        'amount' => 3000.00,
+    ]);
+
+    $fuelEntry = $this->action->execute([
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'date' => '2024-01-20',
+        'odometer_reading' => 50000,
+        'fuel_quantity' => 50.00,
+        'amount' => 3500.00,
+        'petrol_station_name' => 'Shell Station',
+    ], $this->user);
+
+    expect($fuelEntry->avg_kmpl)->toBe('20.00');
+
+    $retrieved = FuelEntry::find($fuelEntry->id);
+    expect($retrieved->avg_kmpl)->toBe('20.00');
+});
+
+test('previous entry belonging to a different user is ignored', function () {
+    $otherUser = User::factory()->create();
+
+    FuelEntry::factory()->create([
+        'user_id' => $otherUser->id,
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'odometer_reading' => 49000,
+        'fuel_quantity' => 40.00,
+        'amount' => 3000.00,
+    ]);
+
+    $fuelEntry = $this->action->execute([
+        'vehicle_id' => $this->vehicle->id,
+        'account_id' => $this->account->id,
+        'date' => '2024-01-15',
+        'odometer_reading' => 50000,
+        'fuel_quantity' => 45.50,
+        'amount' => 3500.00,
+        'petrol_station_name' => 'Shell Station',
+    ], $this->user);
+
+    expect($fuelEntry->dist_since_last_refuel)->toBeNull();
+    expect($fuelEntry->avg_kmpl)->toBeNull();
+});
+
 test('updates vehicle kilometers when fuel entry is created', function () {
     // Set initial kilometers for the vehicle
     $initialKilometers = 45000;

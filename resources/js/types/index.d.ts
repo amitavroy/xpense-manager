@@ -268,6 +268,8 @@ export interface FuelEntry {
   account_id?: number;
   date?: string;
   odometer_reading?: number;
+  dist_since_last_refuel?: number | null;
+  avg_kmpl?: number | null;
   fuel_quantity?: number;
   amount?: number;
   petrol_station_name?: string;

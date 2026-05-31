@@ -32,8 +32,20 @@ class AddFuelEntryAction
             // Load the vehicle
             $vehicle = Vehicle::findOrFail($data['vehicle_id']);
 
-            // Create the fuel entry
-            $fuelEntry = FuelEntry::create($data);
+            $previousEntry = FuelEntry::where('vehicle_id', $data['vehicle_id'])
+                ->where('user_id', $user->id)
+                ->orderBy('odometer_reading', 'desc')
+                ->first();
+
+            $metrics = FuelEntry::computeMetrics(
+                $previousEntry,
+                $data['odometer_reading'],
+                $data['fuel_quantity'],
+            );
+
+            $fuelEntry = new FuelEntry($data);
+            $fuelEntry->forceFill($metrics);
+            $fuelEntry->save();
 
             // Update vehicle kilometers with the new odometer reading
             $vehicle->update([

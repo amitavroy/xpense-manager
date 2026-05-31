@@ -29,14 +29,7 @@ class FuelEntryController extends Controller
         $fuelEntry = new FuelEntry;
         $vehicles = $this->vehicleQuery
             ->forUser()
-            ->get(['id', 'name', 'kilometers'])
-            ->map(function ($vehicle) {
-                return [
-                    'id' => $vehicle->id,
-                    'name' => $vehicle->name,
-                    'kilometers' => $vehicle->kilometers,
-                ];
-            });
+            ->get(['id', 'name', 'kilometers']);
         $accounts = $this->dropdownService->getAccounts(Auth::user());
 
         $vehicleId = request()->integer('vehicle_id');

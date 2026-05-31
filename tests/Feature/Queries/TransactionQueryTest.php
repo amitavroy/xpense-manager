@@ -475,7 +475,7 @@ test('expenseStats returns current and previous month totals', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $currentMonth = Carbon::now();
-    $previousMonth = Carbon::now()->subMonth();
+    $previousMonth = Carbon::now()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,
@@ -768,7 +768,7 @@ test('expenses defaults to current month when no dates provided', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $currentMonth = Carbon::now();
-    $previousMonth = Carbon::now()->subMonth();
+    $previousMonth = Carbon::now()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,
@@ -990,7 +990,7 @@ test('expenses preset this_month filters correctly', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $now = Carbon::now();
-    $previousMonth = $now->copy()->subMonth();
+    $previousMonth = $now->copy()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,
@@ -1019,7 +1019,7 @@ test('expenses preset last_month filters correctly', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $now = Carbon::now();
-    $previousMonth = $now->copy()->subMonth();
+    $previousMonth = $now->copy()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,
@@ -1105,7 +1105,7 @@ test('expenses preset overrides manual dates', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $now = Carbon::now();
-    $previousMonth = $now->copy()->subMonth();
+    $previousMonth = $now->copy()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,

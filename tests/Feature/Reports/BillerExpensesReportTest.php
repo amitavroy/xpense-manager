@@ -37,7 +37,7 @@ test('authenticated user can view biller expenses data on monthly expenses repor
     BillInstance::factory()->create([
         'bill_id' => $billTwo->id,
         'amount' => 1500,
-        'paid_date' => $now->copy()->subMonth()->addDays(5),
+        'paid_date' => $now->copy()->subMonthNoOverflow()->addDays(5),
     ]);
 
     $response = $this->actingAs($user)->get(route('reports.monthly-expenses', [

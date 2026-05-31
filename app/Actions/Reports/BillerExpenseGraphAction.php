@@ -51,7 +51,7 @@ class BillerExpenseGraphAction
         $billerExpenseData = [];
 
         if ($selectedBillerIds !== []) {
-            $billerRangeEnd = Carbon::now()->subMonth()->endOfMonth();
+            $billerRangeEnd = Carbon::now()->subMonthNoOverflow()->endOfMonth();
             $billerRangeStart = $billerRangeEnd->copy()->subMonths($billerMonths - 1)->startOfMonth();
 
             $result = $this->billerExpenseQuery->execute(

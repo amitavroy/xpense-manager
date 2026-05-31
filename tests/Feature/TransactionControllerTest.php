@@ -39,7 +39,7 @@ test('transactions index defaults to current month', function () {
     $expenseCategory = Category::factory()->create(['type' => TransactionTypeEnum::EXPENSE]);
 
     $currentMonth = Carbon::now();
-    $previousMonth = Carbon::now()->subMonth();
+    $previousMonth = Carbon::now()->startOfMonth()->subMonth();
 
     Transaction::factory()->create([
         'user_id' => $user->id,

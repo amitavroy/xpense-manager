@@ -45,7 +45,7 @@ class TransactionQuery
 
         // get previous month total expense
         $previousMonthTotalExpense = $this->getTotalExpenseForMonth(
-            month: Carbon::now()->subMonth()
+            month: Carbon::now()->subMonthNoOverflow()
         );
 
         $currentMonthTotalCreditCardExpense = $this->getTotalCreditCardExpenseForMonth(
@@ -53,7 +53,7 @@ class TransactionQuery
         );
 
         $previousMonthTotalCreditCardExpense = $this->getTotalCreditCardExpenseForMonth(
-            month: Carbon::now()->subMonth()
+            month: Carbon::now()->subMonthNoOverflow()
         );
 
         return collect([
@@ -126,8 +126,8 @@ class TransactionQuery
                 $now->copy()->endOfMonth()->format('Y-m-d'),
             ],
             'last_month' => [
-                $now->copy()->subMonth()->startOfMonth()->format('Y-m-d'),
-                $now->copy()->subMonth()->endOfMonth()->format('Y-m-d'),
+                $now->copy()->subMonthNoOverflow()->startOfMonth()->format('Y-m-d'),
+                $now->copy()->subMonthNoOverflow()->endOfMonth()->format('Y-m-d'),
             ],
             'last_week' => [
                 $now->copy()->subDays(6)->startOfDay()->format('Y-m-d'),

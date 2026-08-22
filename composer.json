@@ -10,21 +10,21 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "inertiajs/inertia-laravel": "^2.0.24",
-        "laravel/fortify": "^1.37.2",
-        "laravel/framework": "^13.14.0",
+        "inertiajs/inertia-laravel": "^2.0.25",
+        "laravel/fortify": "^1.38.0",
+        "laravel/framework": "^13.26.1",
         "laravel/tinker": "^3.0.2",
-        "laravel/wayfinder": "^0.1.20"
+        "laravel/wayfinder": "^0.1.21"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
-        "laravel/boost": "^2.4.9",
+        "laravel/boost": "^2.5.5",
         "laravel/pail": "^1.2.7",
-        "laravel/pint": "^1.29.1",
-        "laravel/sail": "^1.62.0",
-        "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^8.9.4",
-        "pestphp/pest": "^4.7.2",
+        "laravel/pint": "^1.30.5",
+        "laravel/sail": "^1.67.0",
+        "mockery/mockery": "^1.6.15",
+        "nunomaduro/collision": "^8.9.5",
+        "pestphp/pest": "^4.7.8",
         "pestphp/pest-plugin-laravel": "^4.1"
     },
     "autoload": {
